@@ -13,7 +13,8 @@ defmodule BillingGateway.Mixfile do
       elixirc_paths: elixirc_paths(Mix.env),
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
-      deps: deps()
+      deps: deps(),
+      preferred_cli_env: ["white_bread.run": :test]
     ]
   end
 
@@ -39,7 +40,8 @@ defmodule BillingGateway.Mixfile do
       {:phoenix, "~> 1.3.4"},
       {:phoenix_pubsub, "~> 1.0"},
       {:gettext, "~> 0.11"},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:white_bread, "~> 4.1.1", only: [:dev, :test]}
     ]
   end
 end
