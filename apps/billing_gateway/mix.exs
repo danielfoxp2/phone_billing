@@ -41,6 +41,8 @@ defmodule BillingGateway.Mixfile do
       {:phoenix_pubsub, "~> 1.0"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
+      {:earmark, "~> 1.2", only: :dev},
+      {:ex_doc, "~> 0.19", only: :dev},
       {:white_bread, "~> 4.1.1", only: [:dev, :test]},
       {:credo, "~> 0.10.0", only: [:dev, :test], runtime: false}
     ]
