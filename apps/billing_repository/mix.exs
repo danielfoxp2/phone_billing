@@ -18,7 +18,7 @@ defmodule BillingRepository.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :postgrex],
       mod: {BillingRepository.Application, []}
     ]
   end
@@ -31,6 +31,8 @@ defmodule BillingRepository.MixProject do
       # {:sibling_app_in_umbrella, in_umbrella: true},
       {:earmark, "~> 1.2", only: :dev},
       {:ex_doc, "~> 0.19", only: :dev},
+      {:ecto, "~> 2.1"},
+      {:postgrex, ">= 0.0.0"},
       {:credo, "~> 0.10.0", only: [:dev, :test], runtime: false}
     ]
   end

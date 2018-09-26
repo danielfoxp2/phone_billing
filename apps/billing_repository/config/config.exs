@@ -28,3 +28,7 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env()}.exs"
+config :billing_repository,
+  ecto_repos: [BillingRepository.Repo]
+
+import_config "#{Mix.env}.exs"

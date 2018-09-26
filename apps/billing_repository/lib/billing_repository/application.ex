@@ -10,6 +10,7 @@ defmodule BillingRepository.Application do
     children = [
       # Starts a worker by calling: BillingRepository.Worker.start_link(arg)
       # {BillingRepository.Worker, arg},
+      {BillingRepository.Repo, name: BillingRepository.Repo}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
