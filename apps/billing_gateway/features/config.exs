@@ -3,5 +3,6 @@ defmodule WhiteBreadConfig do
 
   suite name:          "All",
         context:       WhiteBreadContext,
-        feature_paths: ["features/"]
+        feature_paths: ["features/"],
+        run_async: true
 end
