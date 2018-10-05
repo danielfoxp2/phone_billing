@@ -7,7 +7,16 @@ defmodule BillingGatewayWeb.CallRecordController do
   action_fallback BillingGatewayWeb.FallbackController
 
   def index(conn, _params) do
-    call_records = Calls.list_call_records()
+    #call_records = Calls.list_call_records()
+    call_records = [%{
+          id: 1,
+          call_id: 1,
+          destination: "+5562984680648",
+          source: "+5562984680648",
+          timestamp: "20181004235619",
+          type: 1
+    }]
+
     render(conn, "index.json", call_records: call_records)
   end
 

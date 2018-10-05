@@ -11,7 +11,7 @@ defmodule BillingGatewayWeb.CallRecordView do
   end
 
   def render("call_record.json", %{call_record: call_record}) do
-    %{id: call_record.id,
+    %{
       id: call_record.id,
       type: call_record.type,
       timestamp: call_record.timestamp,
