@@ -10,14 +10,13 @@ Feature: Hold call details records
     Scenario: Processing request without postback url 
         Given that postback url not exists in the request parameters
         When I try to process call details records
-        Then the processing is not executed
-        And the message "Postback url is required" is immediately returned
+        Then the message "The processing was not executed because postback url was not informed" is immediately returned
 
-    Scenario: Processing request with invalid postback url
-        Given that postback url is invalid 
-        When I try to process call details records
-        Then the processing is not executed
-        And the message "Postback url is invalid" is immediately returned
+    # Scenario: Processing request with invalid postback url
+    #     Given that postback url is invalid 
+    #     When I try to process call details records
+    #     Then the processing is not executed
+    #     And the message "Postback url is invalid" is immediately returned
 
 
         

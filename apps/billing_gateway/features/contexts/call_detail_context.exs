@@ -1,7 +1,11 @@
 defmodule BillingGateway.CallDetailContext do
   use WhiteBread.Context
-  
+
+  Code.require_file("features/config/helper.exs")
+  alias BillingGatewayWeb.Helper
+
   given_ ~r/^that postback url not exists in the request parameters$/, fn state ->
+    state = %{call_records: %{}}
     {:ok, state}
   end
 
@@ -10,6 +14,8 @@ defmodule BillingGateway.CallDetailContext do
   end
 
   when_ ~r/^I try to process call details records$/, fn state ->
+    Helper.launch_api()
+    state = HTTPoison.get("http://localhost:4000/api/call_records")
     {:ok, state}
   end
 
@@ -18,7 +24,9 @@ defmodule BillingGateway.CallDetailContext do
   end
 
   and_ ~r/^the message "(?<argument_one>[^"]+)" is immediately returned$/, fn state, %{argument_one: _argument_one} ->
-    {:ok, state}
+    {:ok, %HTTPoison.Response{body: body, status_code: status_code}} = state
+
+    assert status_code == 200
   end
 
   
