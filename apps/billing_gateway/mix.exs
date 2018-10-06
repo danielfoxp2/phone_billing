@@ -24,7 +24,7 @@ defmodule BillingGateway.Mixfile do
   def application do
     [
       mod: {BillingGateway.Application, []},
-      extra_applications: [:billing_processor, :billing_repository, :logger, :runtime_tools]
+      extra_applications: [:billing_processor, :billing_repository, :logger, :runtime_tools, :httpoison]
     ]
   end
 
@@ -45,6 +45,7 @@ defmodule BillingGateway.Mixfile do
       {:ex_doc, "~> 0.19", only: :dev},
       {:white_bread, "~> 4.1.1", only: [:dev, :test]},
       {:credo, "~> 0.10.0", only: [:dev, :test], runtime: false},
+      {:httpoison, "~> 1.0"},
       {:billing_processor, in_umbrella: true},
       {:billing_repository, in_umbrella: true}
     ]
