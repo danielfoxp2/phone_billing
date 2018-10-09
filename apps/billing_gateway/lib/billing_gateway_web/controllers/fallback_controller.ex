@@ -17,4 +17,10 @@ defmodule BillingGatewayWeb.FallbackController do
     |> put_status(:not_found)
     |> render(BillingGatewayWeb.ErrorView, :"404")
   end
+
+  def call(conn, {:postback_url_error, error_message}) do
+    conn
+    |> render(BillingGatewayWeb.ErrorView, :"200", postback_url_error_message: error_message)
+  end
+
 end
