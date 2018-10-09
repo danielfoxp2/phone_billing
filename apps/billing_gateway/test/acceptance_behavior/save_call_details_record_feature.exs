@@ -1,7 +1,7 @@
-defmodule BillingGatewayWeb.HoldCallDetailsRecordFeature do
+defmodule BillingGatewayWeb.SaveCallDetailsRecordFeature do
   use BillingGatewayWeb.ConnCase
 
-  describe "Hold call details records" do
+  describe "Save call details records" do
     test "It does not process if there's no postback url", %{conn: conn} do
 
       params = %{call_records: %{}}
