@@ -7,11 +7,11 @@ defmodule BillingProcessor.PostbackUrlValidatorTest do
   
   describe "postback url validator" do
     test "should invalidate when postback url key not exists" do
-      assert PostbackUrlValidator.is_valid?(nil) == {:error, @expected_error_message} 
+      assert PostbackUrlValidator.is_valid?(nil) == {:postback_url_error, @expected_error_message} 
     end
 
     test "should invalidate when postback url is empty" do
-      assert PostbackUrlValidator.is_valid?("") == {:error, @expected_error_message} 
+      assert PostbackUrlValidator.is_valid?("") == {:postback_url_error, @expected_error_message} 
     end
 
     test "should validate when some value is passed" do
