@@ -20,12 +20,10 @@ defmodule BillingGatewayWeb.CallRecordController do
     render(conn, "index.json", call_records: call_records)
   end
 
-  def create(conn, call_records_params) do
-    with {:ok, %CallRecord{} = call_record} <- Calls.create_call_record(call_records_params) do
+  def create(conn, %{"call_records_params" => call_records_params}) do
+    with {:ok, protocol_number} <- Calls.create_call_record(call_records_params) do
       conn
-      |> put_status(:created)
-      |> put_resp_header("location", call_record_path(conn, :show, call_record))
-      |> render("show.json", call_record: call_record)
+      |> render("show.json", protocol_number: protocol_number)
     end
   end
 

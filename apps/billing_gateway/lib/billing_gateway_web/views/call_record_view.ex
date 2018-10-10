@@ -6,8 +6,8 @@ defmodule BillingGatewayWeb.CallRecordView do
     %{data: render_many(call_records, CallRecordView, "call_record.json")}
   end
 
-  def render("show.json", %{call_record: call_record}) do
-    %{data: render_one(call_record, CallRecordView, "call_record.json")}
+  def render("show.json", %{protocol_number: protocol_number}) do
+    %{protocol_number: protocol_number}
   end
 
   def render("call_record.json", %{call_record: call_record}) do

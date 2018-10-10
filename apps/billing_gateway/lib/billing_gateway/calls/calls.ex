@@ -7,6 +7,7 @@ defmodule BillingGateway.Calls do
 
   alias BillingRepository.Calls.CallRecord
   alias BillingProcessor.PostbackUrlValidator
+  alias BillingRepository.Protocol
 
   @doc """
   Returns the list of call_records.
@@ -53,17 +54,15 @@ defmodule BillingGateway.Calls do
     get_postback_url_from(call_records_params)
     |> PostbackUrlValidator.is_valid?
     |> process_call_records(call_records_params)
-    # %CallRecord{}
-    # |> CallRecord.changeset(attrs)
-    # |> Repo.insert()
   end
 
-  defp get_postback_url_from(%{postback_url: postback_url}), do: postback_url
+  defp get_postback_url_from(%{"postback_url" => postback_url}), do: postback_url
   defp get_postback_url_from(_call_records_params), do: nil
 
-  defp process_call_records({:ok, _}, call_records_params), do: {:ok, "It's fine"}
+  defp process_call_records({:ok, _}, call_records_params), do: {:ok, get_protocol_number()}
   defp process_call_records(processing_cant_proceed, _call_records_params), do: processing_cant_proceed
 
+  defp get_protocol_number(), do: Protocol.new_number
   @doc """
   Updates a call_record.
 
