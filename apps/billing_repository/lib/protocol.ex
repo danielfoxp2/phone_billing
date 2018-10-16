@@ -2,7 +2,7 @@ defmodule BillingRepository.Protocol do
   alias BillingRepository.Repo
 
   def new_number do
-    Ecto.Adapters.SQL.query!(Repo, "select nextval('seq_protocol')")
+    Ecto.Adapters.SQL.query!(Repo, "select nextval('protocol_seq')")
     |> get_number
   end
 
