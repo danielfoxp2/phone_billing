@@ -13,7 +13,7 @@ defmodule BillingGatewayWeb.SaveCallDetailsRecordFeature do
     test "When there's postback url then a processing protocol is returned to the caller", %{conn: conn} do
       params = %{call_records: [], postback_url: "www.example.com"}
       conn = post(conn, call_record_path(conn, :create), call_records_params: params)
-      expected_protocol = 9
+      expected_protocol = 1
 
       assert json_response(conn, 200)["protocol_number"] == expected_protocol
     end
