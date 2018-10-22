@@ -3,7 +3,7 @@ defmodule BillingProcessor.CallRecordValidatorTest do
   alias BillingProcessor.CallRecordValidator
 
   describe "call record validation" do
-    test "should invalidate if not contains id" do
+    test "should invalidate when it does not contains the id" do
       call_record_without_id = %{}
       call_record_with_empty_id = %{"id" => ""}
       call_record_with_nil_id = %{"id" => nil}
