@@ -33,5 +33,20 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert Enum.member?(call_record_with_nil_type["errors"], expected_message_error)
     end
 
+    test "should invalidate when it does not contains the timestamp" do
+      call_record_without_timestamp = %{}
+      call_record_with_empty_timestamp = %{"timestamp" => ""}
+      call_record_with_nil_timestamp = %{"timestamp" => nil}
+      expected_message_error = "call record don't have timestamp"
+
+      call_record_without_timestamp = CallRecordValidator.validate(call_record_without_timestamp)
+      call_record_with_empty_timestamp = CallRecordValidator.validate(call_record_with_empty_timestamp)
+      call_record_with_nil_timestamp = CallRecordValidator.validate(call_record_with_nil_timestamp)
+
+      assert Enum.member?(call_record_without_timestamp["errors"], expected_message_error)
+      assert Enum.member?(call_record_with_empty_timestamp["errors"], expected_message_error)
+      assert Enum.member?(call_record_with_nil_timestamp["errors"], expected_message_error)
+    end
+
   end
 end
