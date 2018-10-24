@@ -6,6 +6,7 @@ defmodule BillingProcessor.CallRecordValidator do
     |> validate_timestamp()
     |> validate_call_id()
     |> validate_source()
+    |> validate_destination()
   end
 
   defp validate_id(call_record) do
@@ -36,6 +37,12 @@ defmodule BillingProcessor.CallRecordValidator do
     call_record
     |> get_field(:source)
     |> validate(call_record, :source)
+  end
+
+  defp validate_destination(call_record) do
+    call_record
+    |> get_field(:destination)
+    |> validate(call_record, :destination)
   end
 
   defp get_field(call_record, field), do: Map.get(call_record, field)

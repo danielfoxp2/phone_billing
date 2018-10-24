@@ -78,7 +78,20 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert Enum.member?(call_record_with_nil_source["errors"], expected_message_error)
     end
 
-    
+    test "should invalidate when it does not contains the destination" do
+      call_record_without_destination = %{}
+      call_record_with_empty_destination = %{"destination" => ""}
+      call_record_with_nil_destination = %{"destination" => nil}
+      expected_message_error = "call record don't have destination"
+
+      call_record_without_destination = CallRecordValidator.validate(call_record_without_destination)
+      call_record_with_empty_destination = CallRecordValidator.validate(call_record_with_empty_destination)
+      call_record_with_nil_destination = CallRecordValidator.validate(call_record_with_nil_destination)
+
+      assert Enum.member?(call_record_without_destination["errors"], expected_message_error)
+      assert Enum.member?(call_record_with_empty_destination["errors"], expected_message_error)
+      assert Enum.member?(call_record_with_nil_destination["errors"], expected_message_error)
+    end
 
   end
 end
