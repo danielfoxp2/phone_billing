@@ -1,16 +1,19 @@
 defmodule BillingProcessor.CallRecordValidator do
   def validate(call_record) do
-    validate_id(call_record)
+    call_record
+    |> validate_id()
     |> validate_type()
   end
 
   defp validate_id(call_record) do
-    get_field(call_record, :id)
+    call_record
+    |> get_field(:id)
     |> validate(call_record, :id)
   end
 
   defp validate_type(call_record) do
-    get_field(call_record, :type)
+    call_record
+    |> get_field(:type)
     |> validate(call_record, :type)
   end
 
