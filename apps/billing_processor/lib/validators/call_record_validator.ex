@@ -4,6 +4,7 @@ defmodule BillingProcessor.CallRecordValidator do
     |> validate_id()
     |> validate_type()
     |> validate_timestamp()
+    |> validate_call_id()
   end
 
   defp validate_id(call_record) do
@@ -22,6 +23,12 @@ defmodule BillingProcessor.CallRecordValidator do
     call_record
     |> get_field(:timestamp)
     |> validate(call_record, :timestamp)
+  end
+
+  defp validate_call_id(call_record) do
+    call_record
+    |> get_field(:call_id)
+    |> validate(call_record, :call_id)
   end
 
   defp get_field(call_record, field), do: Map.get(call_record, field)

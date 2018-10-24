@@ -48,5 +48,21 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert Enum.member?(call_record_with_nil_timestamp["errors"], expected_message_error)
     end
 
+    test "should invalidate when it does not contains the call id" do
+      call_record_without_call_id = %{}
+      call_record_with_empty_call_id = %{"call_id" => ""}
+      call_record_with_nil_call_id = %{"call_id" => nil}
+      expected_message_error = "call record don't have call_id"
+
+      call_record_without_call_id = CallRecordValidator.validate(call_record_without_call_id)
+      call_record_with_empty_call_id = CallRecordValidator.validate(call_record_with_empty_call_id)
+      call_record_with_nil_call_id = CallRecordValidator.validate(call_record_with_nil_call_id)
+
+      assert Enum.member?(call_record_without_call_id["errors"], expected_message_error)
+      assert Enum.member?(call_record_with_empty_call_id["errors"], expected_message_error)
+      assert Enum.member?(call_record_with_nil_call_id["errors"], expected_message_error)
+    end 
+
+
   end
 end
