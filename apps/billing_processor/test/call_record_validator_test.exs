@@ -63,10 +63,10 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert Enum.member?(call_record_with_nil_call_id["errors"], expected_message_error)
     end 
 
-    test "should invalidate when it does not contains the source" do
-      call_record_without_source = %{}
-      call_record_with_empty_source = %{"source" => ""}
-      call_record_with_nil_source = %{"source" => nil}
+    test "should invalidate when it does not contains the source in start record" do
+      call_record_without_source = %{"type" => "start"}
+      call_record_with_empty_source = %{"type" => "start", "source" => ""}
+      call_record_with_nil_source = %{"type" => "start", "source" => nil}
       expected_message_error = "call record don't have source"
 
       call_record_without_source = CallRecordValidator.validate(call_record_without_source)
