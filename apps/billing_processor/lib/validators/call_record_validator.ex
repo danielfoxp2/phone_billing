@@ -1,51 +1,19 @@
 defmodule BillingProcessor.CallRecordValidator do
   def validate(call_record) do
     call_record
-    |> validate_id()
-    |> validate_type()
-    |> validate_timestamp()
-    |> validate_call_id()
-    |> validate_source()
-    |> validate_destination()
+    |> validate(:id)
+    |> validate(:type)
+    |> validate(:timestamp)
+    |> validate(:call_id)
+    |> validate(:source)
+    |> validate(:destination)
   end
 
-  defp validate_id(call_record) do
+  defp validate(call_record, field) do
     call_record
-    |> get_field(:id)
-    |> validate(call_record, :id)
+    |> Map.get(field)
+    |> validate(call_record, field)
   end
-
-  defp validate_type(call_record) do
-    call_record
-    |> get_field(:type)
-    |> validate(call_record, :type)
-  end
-
-  defp validate_timestamp(call_record) do
-    call_record
-    |> get_field(:timestamp)
-    |> validate(call_record, :timestamp)
-  end
-
-  defp validate_call_id(call_record) do
-    call_record
-    |> get_field(:call_id)
-    |> validate(call_record, :call_id)
-  end
-
-  defp validate_source(call_record) do
-    call_record
-    |> get_field(:source)
-    |> validate(call_record, :source)
-  end
-
-  defp validate_destination(call_record) do
-    call_record
-    |> get_field(:destination)
-    |> validate(call_record, :destination)
-  end
-
-  defp get_field(call_record, field), do: Map.get(call_record, field)
 
   defp validate("", in_call_record, field), do: mount_error_for(field, in_call_record)
   defp validate(nil, in_call_record, field),  do: mount_error_for(field, in_call_record)
