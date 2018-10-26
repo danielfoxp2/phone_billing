@@ -133,5 +133,21 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert actual_result_with_nil_destination == expected_result
     end
 
+    test "should be a valid start call record when all fields are set" do
+      expected_start_call_record = %{
+        "id" => 1,
+        "type" => "start",
+        "timestamp" => "1970-01-01 00:00:01",
+        "call_id" => 123,
+        "source" => 62984680648,
+        "destination" => 62111222333
+      }
+
+      call_record_after_validation = CallRecordValidator.validate(expected_start_call_record)
+
+      assert call_record_after_validation["errors"] == nil
+      assert call_record_after_validation == expected_start_call_record
+    end
+
   end
 end
