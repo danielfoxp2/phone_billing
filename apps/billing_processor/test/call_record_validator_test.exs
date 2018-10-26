@@ -149,5 +149,19 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert call_record_after_validation == expected_start_call_record
     end
 
+    test "should be a valid end call record when all fields are set" do
+      expected_end_call_record = %{
+        "id" => 1,
+        "type" => "end",
+        "timestamp" => "1970-01-01 00:00:01",
+        "call_id" => 123
+      }
+
+      call_record_after_validation = CallRecordValidator.validate(expected_end_call_record)
+
+      assert call_record_after_validation["errors"] == nil
+      assert call_record_after_validation == expected_end_call_record
+    end
+
   end
 end
