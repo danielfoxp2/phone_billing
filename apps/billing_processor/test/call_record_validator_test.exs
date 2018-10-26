@@ -98,10 +98,10 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert actual_result_with_nil_source == expected_result
     end
 
-    test "should invalidate when it does not contains the destination" do
-      call_record_without_destination = %{}
-      call_record_with_empty_destination = %{"destination" => ""}
-      call_record_with_nil_destination = %{"destination" => nil}
+    test "should invalidate when it does not contains the destination in start record" do
+      call_record_without_destination = %{"type" => "start"}
+      call_record_with_empty_destination = %{"type" => "start", "destination" => ""}
+      call_record_with_nil_destination = %{"type" => "start", "destination" => nil}
       expected_message_error = "call record don't have destination"
 
       call_record_without_destination = CallRecordValidator.validate(call_record_without_destination)
