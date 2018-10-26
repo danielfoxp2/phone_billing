@@ -19,7 +19,7 @@ defmodule BillingProcessor.CallRecordValidator do
 
   defp validate("", in_call_record, field), do: mount_error_for(field, in_call_record)
   defp validate(nil, in_call_record, field), do: mount_error_for(field, in_call_record)
-  defp validate(_field_value, call_record, field), do: call_record
+  defp validate(_field_value, call_record, _field), do: call_record
 
   defp mount_error_for(field, in_call_record) do
     errors = Map.get(in_call_record, "errors", [])
