@@ -10,6 +10,7 @@ defmodule BillingProcessor.CallRecordValidator do
   end
 
   defp validate(%{"type" => type} = call_record, "source") when type == "end", do: call_record
+  defp validate(%{"type" => type} = call_record, "destination") when type == "end", do: call_record
   defp validate(call_record, field) do
     call_record
     |> Map.get(field)

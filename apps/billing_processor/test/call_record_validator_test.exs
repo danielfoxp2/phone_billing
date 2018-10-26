@@ -113,5 +113,25 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert Enum.member?(call_record_with_nil_destination["errors"], expected_message_error)
     end
 
+    test "should be a valid call record when not contains the destination but it is a end type record" do
+      call_record_without_destination = %{"type" => "end"}
+      call_record_with_empty_destination = %{"type" => "end", "destination" => ""}
+      call_record_with_nil_destination = %{"type" => "end", "destination" => nil}
+      expected_message_error = "call record don't have destination"
+      expected_result = false
+    
+      call_record_without_destination = CallRecordValidator.validate(call_record_without_destination)
+      call_record_with_empty_destination = CallRecordValidator.validate(call_record_with_empty_destination)
+      call_record_with_nil_destination = CallRecordValidator.validate(call_record_with_nil_destination)
+
+      actual_result_without_destination = Enum.member?(call_record_without_destination["errors"], expected_message_error)
+      actual_result_with_empty_destination = Enum.member?(call_record_with_empty_destination["errors"], expected_message_error)
+      actual_result_with_nil_destination = Enum.member?(call_record_with_nil_destination["errors"], expected_message_error)
+
+      assert actual_result_without_destination == expected_result
+      assert actual_result_with_empty_destination == expected_result
+      assert actual_result_with_nil_destination == expected_result
+    end
+
   end
 end
