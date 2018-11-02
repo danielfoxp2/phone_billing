@@ -28,6 +28,23 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert Enum.member?(call_record_without_type["errors"], expected_message_error)
     end
 
+    test "should invalidate when type of record is diferent of 'start' or 'end'" do
+      call_record_with_empty_type = %{"type" => ""}
+      call_record_with_nil_type = %{"type" => nil}
+      call_record_with_not_allowed_type = %{"type" => "new_type"}
+
+      expected_message_error_for_nil_and_empty_type = "Call record has a wrong type: ''. Only 'start' and 'end' types are allowed."
+      expected_message_error_for_not_allowed_type = "Call record has a wrong type: 'new_type'. Only 'start' and 'end' types are allowed."
+
+      call_record_with_empty_type = CallRecordValidator.validate(call_record_with_empty_type)
+      call_record_with_nil_type = CallRecordValidator.validate(call_record_with_nil_type)
+      call_record_after_validation = CallRecordValidator.validate(call_record_with_not_allowed_type)
+
+      assert Enum.member?(call_record_with_empty_type["errors"], expected_message_error_for_nil_and_empty_type)
+      assert Enum.member?(call_record_with_nil_type["errors"], expected_message_error_for_nil_and_empty_type)
+      assert Enum.member?(call_record_after_validation["errors"], expected_message_error_for_not_allowed_type)
+    end
+
     test "should invalidate when it does not contains the timestamp" do
       call_record_without_timestamp = %{}
       call_record_with_nil_timestamp = %{"timestamp" => nil}
@@ -39,6 +56,20 @@ defmodule BillingProcessor.CallRecordValidatorTest do
      
       assert Enum.member?(call_record_without_timestamp["errors"], expected_message_error)
       assert Enum.member?(call_record_with_nil_timestamp["errors"], expected_message_error)
+    end
+
+    test "should invalidate when timestamp has not YYYY-MM-DDThh:mm:ssZ format" do
+      call_record_with_empty_timestamp = %{"timestamp" => ""}
+      call_record_with_invalid_timestamp = %{"timestamp" => "44:23"}
+
+      expected_message_error_for_empty_timestamp = "Call record has a wrong timestamp: ''. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
+      expected_message_error_for_not_allowed_timestamp = "Call record has a wrong timestamp: '44:23'. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
+      
+      call_record_with_empty_timestamp = CallRecordValidator.validate(call_record_with_empty_timestamp)
+      call_record_with_invalid_timestamp = CallRecordValidator.validate(call_record_with_invalid_timestamp)
+
+      assert Enum.member?(call_record_with_empty_timestamp["errors"], expected_message_error_for_empty_timestamp)
+      assert Enum.member?(call_record_with_invalid_timestamp["errors"], expected_message_error_for_not_allowed_timestamp)
     end
 
     test "should invalidate when it does not contains the call id" do
@@ -156,35 +187,5 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert call_record_after_validation == expected_end_call_record
     end
 
-    test "should invalidate when type of record is diferent of 'start' or 'end'" do
-      call_record_with_empty_type = %{"type" => ""}
-      call_record_with_nil_type = %{"type" => nil}
-      call_record_with_not_allowed_type = %{"type" => "new_type"}
-
-      expected_message_error_for_nil_and_empty_type = "Call record has a wrong type: ''. Only 'start' and 'end' types are allowed."
-      expected_message_error_for_not_allowed_type = "Call record has a wrong type: 'new_type'. Only 'start' and 'end' types are allowed."
-
-      call_record_with_empty_type = CallRecordValidator.validate(call_record_with_empty_type)
-      call_record_with_nil_type = CallRecordValidator.validate(call_record_with_nil_type)
-      call_record_after_validation = CallRecordValidator.validate(call_record_with_not_allowed_type)
-
-      assert Enum.member?(call_record_with_empty_type["errors"], expected_message_error_for_nil_and_empty_type)
-      assert Enum.member?(call_record_with_nil_type["errors"], expected_message_error_for_nil_and_empty_type)
-      assert Enum.member?(call_record_after_validation["errors"], expected_message_error_for_not_allowed_type)
-    end
-
-    test "should invalidate when timestamp has not YYYY-MM-DDThh:mm:ssZ format" do
-      call_record_with_empty_timestamp = %{"timestamp" => ""}
-      call_record_with_invalid_timestamp = %{"timestamp" => "44:23"}
-
-      expected_message_error_for_empty_timestamp = "Call record has a wrong timestamp: ''. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
-      expected_message_error_for_not_allowed_timestamp = "Call record has a wrong timestamp: '44:23'. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
-      
-      call_record_with_empty_timestamp = CallRecordValidator.validate(call_record_with_empty_timestamp)
-      call_record_with_invalid_timestamp = CallRecordValidator.validate(call_record_with_invalid_timestamp)
-
-      assert Enum.member?(call_record_with_empty_timestamp["errors"], expected_message_error_for_empty_timestamp)
-      assert Enum.member?(call_record_with_invalid_timestamp["errors"], expected_message_error_for_not_allowed_timestamp)
-    end
   end
 end
