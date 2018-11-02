@@ -1,6 +1,7 @@
 defmodule BillingProcessor.CallRecordValidator do
   alias BillingProcessor.ErrorMessage
   alias BillingProcessor.TimestampValidator
+  alias BillingProcessor.Error
 
   def validate(call_record) do
     call_record
@@ -19,8 +20,8 @@ defmodule BillingProcessor.CallRecordValidator do
   end
 
   defp validate(%{"timestamp" => timestamp} = call_record, "timestamp") when not is_nil(timestamp) do
-    TimestampValidator.check_consistence_of(timestamp)
-    |> validate_of(call_record, "timestamp")
+    when_it_is_invalid = TimestampValidator.check_consistence_of(timestamp)
+    Error.build(call_record, "timestamp", when_it_is_invalid)
   end
 
   defp validate(%{"call_id" => call_id} = call_record, "call_id") when not is_nil(call_id) do

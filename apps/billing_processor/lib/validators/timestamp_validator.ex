@@ -3,10 +3,10 @@ defmodule BillingProcessor.TimestampValidator do
   def check_consistence_of(timestamp) do
     timestamp
     |> NaiveDateTime.from_iso8601
-    |> is_valid?
+    |> is_invalid?
   end
   
-  defp is_valid?({:ok, _}), do: true
-  defp is_valid?({:error, _}), do: false
+  defp is_invalid?({:ok, _}), do: false
+  defp is_invalid?({:error, _}), do: true
 
 end
