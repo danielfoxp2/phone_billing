@@ -27,16 +27,16 @@ defmodule BillingProcessor.CallRecordValidator do
 
   defp validate(%{"call_id" => call_id} = in_call_record, "call_id") when not is_nil(call_id) do
     only_integer = ~r/^[0-9]+$/
-
-    when_it_is_invalid = Regex.match?(only_integer, call_id) == false
-    Error.build(in_call_record, "call_id", when_it_is_invalid)
+    validate_number_in(in_call_record, "call_id", call_id, only_integer)
   end
 
-  defp validate(%{"source" => source} = call_record, "source") 
-  when not is_nil(source), do: validate_phone_number_in(call_record, "source", source)
+  defp validate(%{"source" => source} = call_record, "source") when not is_nil(source) do
+    validate_number_in(call_record, "source", source, only_integer_with_ten_or_eleven_digits_regex())
+  end
 
-  defp validate(%{"destination" => destination} = call_record, "destination") 
-  when not is_nil(destination), do: validate_phone_number_in(call_record, "destination", destination)
+  defp validate(%{"destination" => destination} = call_record, "destination") when not is_nil(destination) do
+    validate_number_in(call_record, "destination", destination, only_integer_with_ten_or_eleven_digits_regex())
+  end
 
   defp validate(call_record, field) do
     call_record
@@ -44,13 +44,13 @@ defmodule BillingProcessor.CallRecordValidator do
     |> validate(call_record, field)
   end
 
-  defp validate_phone_number_in(in_call_record, field, value) do
-    only_integer_with_ten_or_eleven_digits = ~r/^\d{10,11}+$/
-
-    when_it_is_invalid = Regex.match?(only_integer_with_ten_or_eleven_digits, value) == false
+  defp validate_number_in(in_call_record, field, value, regex) do
+    when_it_is_invalid = Regex.match?(regex, value) == false
     Error.build(in_call_record, field, when_it_is_invalid)
   end
 
+  defp only_integer_with_ten_or_eleven_digits_regex(), do: ~r/^\d{10,11}+$/
+  
   defp validate(field_value, in_call_record, field) when is_nil(field_value) or field_value == "" do
     is_invalid = true
     Error.build(in_call_record, {:structure, field}, is_invalid)
