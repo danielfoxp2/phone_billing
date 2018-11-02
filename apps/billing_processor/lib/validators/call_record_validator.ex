@@ -1,4 +1,6 @@
 defmodule BillingProcessor.CallRecordValidator do
+  alias BillingProcessor.ErrorMessage
+
   def validate(call_record) do
     call_record
     |> validate("id")
@@ -12,7 +14,7 @@ defmodule BillingProcessor.CallRecordValidator do
   defp validate(%{"type" => type} = call_record, "source") when type == "end", do: call_record
   defp validate(%{"type" => type} = call_record, "destination") when type == "end", do: call_record
   defp validate(%{"type" => type} = call_record, "type") when type not in ["start", "end"] do
-    error_message = "Call record has a wrong type: '#{type}'. Only 'start' and 'end' types are allowed."
+    error_message = ErrorMessage.for_wrong_type("type", type)
 
     errors = Map.get(call_record, "errors", [])
     Map.put(call_record, "errors", [error_message] ++ errors)
@@ -60,7 +62,7 @@ defmodule BillingProcessor.CallRecordValidator do
 
   defp validate_timestamp_of({:ok, _}, in_call_record), do: in_call_record
   defp validate_timestamp_of(_invalid_timestamp, in_call_record) do
-    error_message = "Call record has a wrong timestamp: '#{in_call_record["timestamp"]}'. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
+    error_message = ErrorMessage.for_wrong_timestamp("timestamp", in_call_record["timestamp"])
 
     errors = Map.get(in_call_record, "errors", [])
     Map.put(in_call_record, "errors", [error_message] ++ errors)
@@ -68,7 +70,7 @@ defmodule BillingProcessor.CallRecordValidator do
 
   defp validate_call_id_of(true, in_call_record), do: in_call_record
   defp validate_call_id_of(false, in_call_record) do
-    error_message = "Call record has a wrong call id: '#{in_call_record["call_id"]}'. The call id must be integer"
+    error_message = ErrorMessage.for_wrong_call_id("call_id", in_call_record["call_id"])
 
     errors = Map.get(in_call_record, "errors", [])
     Map.put(in_call_record, "errors", [error_message] ++ errors)
@@ -76,16 +78,10 @@ defmodule BillingProcessor.CallRecordValidator do
 
   defp validate_of(true, in_call_record, _field), do: in_call_record
   defp validate_of(false, in_call_record, field) do
-    errors = Map.get(in_call_record, "errors", [])
-    Map.put(in_call_record, "errors", [error_message_for_phone_number_of(field, in_call_record[field])] ++ errors)
-  end
+    error_message = ErrorMessage.for_wrong_phone_number(field, in_call_record[field])
 
-  defp error_message_for_phone_number_of(field, value) do
-    """
-    Call record has a wrong #{field}: '#{value}'. 
-    The phone number format is AAXXXXXXXXX, where AA is the area code and XXXXXXXXX is the phone number.
-    The area code is always composed of two digits while the phone number can be composed of 8 or 9 digits.
-    """
+    errors = Map.get(in_call_record, "errors", [])
+    Map.put(in_call_record, "errors", [error_message] ++ errors)
   end
     
 end
