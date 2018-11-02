@@ -20,17 +20,12 @@ defmodule BillingProcessor.CallRecordValidatorTest do
 
     test "should invalidate when it does not contains the type" do
       call_record_without_type = %{}
-      call_record_with_empty_type = %{"type" => ""}
-      call_record_with_nil_type = %{"type" => nil}
+     
       expected_message_error = "call record don't have type"
 
       call_record_without_type = CallRecordValidator.validate(call_record_without_type)
-      call_record_with_empty_type = CallRecordValidator.validate(call_record_with_empty_type)
-      call_record_with_nil_type = CallRecordValidator.validate(call_record_with_nil_type)
-
+     
       assert Enum.member?(call_record_without_type["errors"], expected_message_error)
-      assert Enum.member?(call_record_with_empty_type["errors"], expected_message_error)
-      assert Enum.member?(call_record_with_nil_type["errors"], expected_message_error)
     end
 
     test "should invalidate when it does not contains the timestamp" do
@@ -161,6 +156,23 @@ defmodule BillingProcessor.CallRecordValidatorTest do
 
       assert call_record_after_validation["errors"] == nil
       assert call_record_after_validation == expected_end_call_record
+    end
+
+    test "should invalidate when type of record is diferent of 'start' or 'end'" do
+      call_record_with_empty_type = %{"type" => ""}
+      call_record_with_nil_type = %{"type" => nil}
+      call_record_with_not_allowed_type = %{"type" => "new_type"}
+
+      expected_message_error_for_nil_and_empty_type = "Call record has a wrong type: ''. Only 'start' and 'end' types are allowed."
+      expected_message_error_for_not_allowed_type = "Call record has a wrong type: 'new_type'. Only 'start' and 'end' types are allowed."
+
+      call_record_with_empty_type = CallRecordValidator.validate(call_record_with_empty_type)
+      call_record_with_nil_type = CallRecordValidator.validate(call_record_with_nil_type)
+      call_record_after_validation = CallRecordValidator.validate(call_record_with_not_allowed_type)
+
+      assert Enum.member?(call_record_with_empty_type["errors"], expected_message_error_for_nil_and_empty_type)
+      assert Enum.member?(call_record_with_nil_type["errors"], expected_message_error_for_nil_and_empty_type)
+      assert Enum.member?(call_record_after_validation["errors"], expected_message_error_for_not_allowed_type)
     end
 
   end

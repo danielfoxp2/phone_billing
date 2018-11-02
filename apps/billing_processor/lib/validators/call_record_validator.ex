@@ -11,6 +11,13 @@ defmodule BillingProcessor.CallRecordValidator do
 
   defp validate(%{"type" => type} = call_record, "source") when type == "end", do: call_record
   defp validate(%{"type" => type} = call_record, "destination") when type == "end", do: call_record
+  defp validate(%{"type" => type} = call_record, "type") when type not in ["start", "end"] do
+    error_message = "Call record has a wrong type: '#{type}'. Only 'start' and 'end' types are allowed."
+
+    errors = Map.get(call_record, "errors", [])
+    Map.put(call_record, "errors", [error_message] ++ errors)
+  end
+  
   defp validate(call_record, field) do
     call_record
     |> Map.get(field)
