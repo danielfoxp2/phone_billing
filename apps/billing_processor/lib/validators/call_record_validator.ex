@@ -14,7 +14,7 @@ defmodule BillingProcessor.CallRecordValidator do
   defp validate(%{"type" => type} = call_record, "source") when type == "end", do: call_record
   defp validate(%{"type" => type} = call_record, "destination") when type == "end", do: call_record
   defp validate(%{"type" => type} = call_record, "type") when type not in ["start", "end"] do
-    error_message = ErrorMessage.for_wrong_type("type", type)
+    error_message = ErrorMessage.for_wrong("type", type)
 
     errors = Map.get(call_record, "errors", [])
     Map.put(call_record, "errors", [error_message] ++ errors)
@@ -62,7 +62,7 @@ defmodule BillingProcessor.CallRecordValidator do
 
   defp validate_timestamp_of({:ok, _}, in_call_record), do: in_call_record
   defp validate_timestamp_of(_invalid_timestamp, in_call_record) do
-    error_message = ErrorMessage.for_wrong_timestamp("timestamp", in_call_record["timestamp"])
+    error_message = ErrorMessage.for_wrong("timestamp", in_call_record["timestamp"])
 
     errors = Map.get(in_call_record, "errors", [])
     Map.put(in_call_record, "errors", [error_message] ++ errors)
@@ -70,7 +70,7 @@ defmodule BillingProcessor.CallRecordValidator do
 
   defp validate_call_id_of(true, in_call_record), do: in_call_record
   defp validate_call_id_of(false, in_call_record) do
-    error_message = ErrorMessage.for_wrong_call_id("call_id", in_call_record["call_id"])
+    error_message = ErrorMessage.for_wrong("call_id", in_call_record["call_id"])
 
     errors = Map.get(in_call_record, "errors", [])
     Map.put(in_call_record, "errors", [error_message] ++ errors)
@@ -78,7 +78,7 @@ defmodule BillingProcessor.CallRecordValidator do
 
   defp validate_of(true, in_call_record, _field), do: in_call_record
   defp validate_of(false, in_call_record, field) do
-    error_message = ErrorMessage.for_wrong_phone_number(field, in_call_record[field])
+    error_message = ErrorMessage.for_wrong(field, in_call_record[field])
 
     errors = Map.get(in_call_record, "errors", [])
     Map.put(in_call_record, "errors", [error_message] ++ errors)
