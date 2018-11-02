@@ -14,13 +14,12 @@ defmodule BillingProcessor.CallRecordValidator do
   defp validate(%{"type" => value} = call_record, "source") when value == "end", do: call_record
   defp validate(%{"type" => value} = call_record, "destination") when value == "end", do: call_record
   defp validate(%{"type" => value} = in_call_record, "type") when value not in ["start", "end"] do
-    ErrorMessage.for_wrong("type", value)
-    |> include(in_call_record)
+    validate_of(false, in_call_record, "type")
   end
 
   defp validate(%{"timestamp" => timestamp} = call_record, "timestamp") when not is_nil(timestamp) do
     NaiveDateTime.from_iso8601(timestamp)
-    |> validate_timestamp_of(call_record)
+    |> validate_of(call_record, "timestamp")
   end
 
   defp validate(%{"call_id" => call_id} = call_record, "call_id") when not is_nil(call_id) do
@@ -58,12 +57,8 @@ defmodule BillingProcessor.CallRecordValidator do
   defp validate(nil, in_call_record, field), do: ErrorMessage.for_wrong(field) |> include(in_call_record)
   defp validate(_field_value, call_record, _field), do: call_record
 
-  defp validate_timestamp_of({:ok, _}, in_call_record), do: in_call_record
-  defp validate_timestamp_of(_invalid_timestamp, in_call_record) do
-    ErrorMessage.for_wrong("timestamp", in_call_record["timestamp"])
-    |> include(in_call_record)
-  end
-
+  defp validate_of({:ok, _}, in_call_record, _field), do: in_call_record
+  defp validate_of({:error, _}, in_call_record, field), do: validate_of(false, in_call_record, field)
   defp validate_of(true, in_call_record, _field), do: in_call_record
   defp validate_of(false, in_call_record, field) do
     ErrorMessage.for_wrong(field, in_call_record[field])
