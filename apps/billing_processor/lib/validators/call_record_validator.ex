@@ -78,26 +78,18 @@ defmodule BillingProcessor.CallRecordValidator do
   defp validate_source_of(true, in_call_record), do: in_call_record
   defp validate_source_of(false, in_call_record) do
     errors = Map.get(in_call_record, "errors", [])
-    Map.put(in_call_record, "errors", [source_error_message(in_call_record["source"])] ++ errors)
+    Map.put(in_call_record, "errors", [error_message_for_phone_number_of("source", in_call_record["source"])] ++ errors)
   end
 
   defp validate_destination_of(true, in_call_record), do: in_call_record
   defp validate_destination_of(false, in_call_record) do
     errors = Map.get(in_call_record, "errors", [])
-    Map.put(in_call_record, "errors", [destination_error_message(in_call_record["destination"])] ++ errors)
+    Map.put(in_call_record, "errors", [error_message_for_phone_number_of("destination", in_call_record["destination"])] ++ errors)
   end
 
-  defp source_error_message(field_value) do
+  defp error_message_for_phone_number_of(field, value) do
     """
-    Call record has a wrong source: '#{field_value}'. 
-    The phone number format is AAXXXXXXXXX, where AA is the area code and XXXXXXXXX is the phone number.
-    The area code is always composed of two digits while the phone number can be composed of 8 or 9 digits.
-    """
-  end
-
-  defp destination_error_message(field_value) do
-    """
-    Call record has a wrong destination: '#{field_value}'. 
+    Call record has a wrong #{field}: '#{value}'. 
     The phone number format is AAXXXXXXXXX, where AA is the area code and XXXXXXXXX is the phone number.
     The area code is always composed of two digits while the phone number can be composed of 8 or 9 digits.
     """
