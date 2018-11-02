@@ -16,7 +16,8 @@ defmodule BillingProcessor.CallRecordValidator do
   defp validate(%{"type" => value} = call_record, "source") when value == "end", do: call_record
   defp validate(%{"type" => value} = call_record, "destination") when value == "end", do: call_record
   defp validate(%{"type" => value} = in_call_record, "type") when value not in ["start", "end"] do
-    validate_of(false, in_call_record, "type")
+    is_invalid = true
+    Error.build(in_call_record, "type", is_invalid)
   end
 
   defp validate(%{"timestamp" => timestamp} = call_record, "timestamp") when not is_nil(timestamp) do
@@ -24,11 +25,11 @@ defmodule BillingProcessor.CallRecordValidator do
     Error.build(call_record, "timestamp", when_it_is_invalid)
   end
 
-  defp validate(%{"call_id" => call_id} = call_record, "call_id") when not is_nil(call_id) do
+  defp validate(%{"call_id" => call_id} = in_call_record, "call_id") when not is_nil(call_id) do
     only_integer = ~r/^[0-9]+$/
 
-    Regex.match?(only_integer, call_id)
-    |> validate_of(call_record, "call_id") 
+    when_it_is_invalid = Regex.match?(only_integer, call_id) == false
+    Error.build(in_call_record, "call_id", when_it_is_invalid)
   end
 
   defp validate(%{"source" => source} = call_record, "source") 
@@ -48,23 +49,15 @@ defmodule BillingProcessor.CallRecordValidator do
     Map.put(in_call_record, "errors", [error_message] ++ errors)
   end
 
-  defp validate_phone_number_in(call_record, field, value) do
+  defp validate_phone_number_in(in_call_record, field, value) do
     only_integer_with_ten_or_eleven_digits = ~r/^\d{10,11}+$/
-    
-    Regex.match?(only_integer_with_ten_or_eleven_digits, value)
-    |> validate_of(call_record, field)
+
+    when_it_is_invalid = Regex.match?(only_integer_with_ten_or_eleven_digits, value) == false
+    Error.build(in_call_record, field, when_it_is_invalid)
   end
 
   defp validate("", in_call_record, field), do: ErrorMessage.for_wrong(field) |> include(in_call_record)
   defp validate(nil, in_call_record, field), do: ErrorMessage.for_wrong(field) |> include(in_call_record)
   defp validate(_field_value, call_record, _field), do: call_record
-
-  defp validate_of({:ok, _}, in_call_record, _field), do: in_call_record
-  defp validate_of({:error, _}, in_call_record, field), do: validate_of(false, in_call_record, field)
-  defp validate_of(true, in_call_record, _field), do: in_call_record
-  defp validate_of(false, in_call_record, field) do
-    ErrorMessage.for_wrong(field, in_call_record[field])
-    |> include(in_call_record)
-  end
-    
+   
 end
