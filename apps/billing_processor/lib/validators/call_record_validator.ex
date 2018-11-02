@@ -44,11 +44,6 @@ defmodule BillingProcessor.CallRecordValidator do
     |> validate(call_record, field)
   end
 
-  defp include(error_message, in_call_record) do
-    errors = Map.get(in_call_record, "errors", [])
-    Map.put(in_call_record, "errors", [error_message] ++ errors)
-  end
-
   defp validate_phone_number_in(in_call_record, field, value) do
     only_integer_with_ten_or_eleven_digits = ~r/^\d{10,11}+$/
 
@@ -56,8 +51,10 @@ defmodule BillingProcessor.CallRecordValidator do
     Error.build(in_call_record, field, when_it_is_invalid)
   end
 
-  defp validate("", in_call_record, field), do: ErrorMessage.for_wrong(field) |> include(in_call_record)
-  defp validate(nil, in_call_record, field), do: ErrorMessage.for_wrong(field) |> include(in_call_record)
+  defp validate(field_value, in_call_record, field) when is_nil(field_value) or field_value == "" do
+    is_invalid = true
+    Error.build(in_call_record, {:structure, field}, is_invalid)
+  end
   defp validate(_field_value, call_record, _field), do: call_record
    
 end

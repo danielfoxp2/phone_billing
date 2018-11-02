@@ -1,6 +1,6 @@
 defmodule BillingProcessor.ErrorMessage do
 
-  def for_wrong(structure), do: "call record don't have #{structure}"
+  def for_wrong({:structure, field}, _value), do: "call record don't have #{field}"
   
   def for_wrong("type" = field, value) do
     "#{call_record_has_a_wrong(field, value)}. Only 'start' and 'end' types are allowed."
