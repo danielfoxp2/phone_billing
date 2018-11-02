@@ -155,16 +155,13 @@ defmodule BillingProcessor.CallRecordValidatorTest do
 
     test "should invalidate when it does not contains the destination in start record" do
       call_record_without_destination = %{"type" => "start"}
-      call_record_with_empty_destination = %{"type" => "start", "destination" => ""}
       call_record_with_nil_destination = %{"type" => "start", "destination" => nil}
       expected_message_error = "call record don't have destination"
 
       call_record_without_destination = CallRecordValidator.validate(call_record_without_destination)
-      call_record_with_empty_destination = CallRecordValidator.validate(call_record_with_empty_destination)
       call_record_with_nil_destination = CallRecordValidator.validate(call_record_with_nil_destination)
 
       assert Enum.member?(call_record_without_destination["errors"], expected_message_error)
-      assert Enum.member?(call_record_with_empty_destination["errors"], expected_message_error)
       assert Enum.member?(call_record_with_nil_destination["errors"], expected_message_error)
     end
 
@@ -188,6 +185,24 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert actual_result_with_nil_destination == expected_result
     end
 
+    test "should invalidate when destination has not AAXXXXXXXX or AAXXXXXXXXX format" do
+      empty_destination = ""
+      alfanumeric_destination = "6243sh2445"
+      destination_with_invalid_lenght = "43388"
+
+      call_record_with_empty_destination = %{"type" => "start", "destination" => empty_destination}
+      call_record_with_alfanumeric_destination = %{"type" => "start", "destination" => alfanumeric_destination}
+      call_record_with_invalid_lenght_destination = %{"type" => "start", "destination" => destination_with_invalid_lenght}
+
+      call_record_with_empty_destination = CallRecordValidator.validate(call_record_with_empty_destination)
+      call_record_with_alfanumeric_destination = CallRecordValidator.validate(call_record_with_alfanumeric_destination)
+      call_record_with_invalid_lenght_destination = CallRecordValidator.validate(call_record_with_invalid_lenght_destination)
+
+      assert Enum.member?(call_record_with_empty_destination["errors"], expected_destination_message_error_for(empty_destination))
+      assert Enum.member?(call_record_with_alfanumeric_destination["errors"], expected_destination_message_error_for(alfanumeric_destination))
+      assert Enum.member?(call_record_with_invalid_lenght_destination["errors"], expected_destination_message_error_for(destination_with_invalid_lenght))
+    end
+
     test "should be a valid start call record when all fields are set" do
       expected_start_call_record = %{
         "id" => 1,
@@ -195,7 +210,7 @@ defmodule BillingProcessor.CallRecordValidatorTest do
         "timestamp" => "1970-01-01 00:00:01",
         "call_id" => "123",
         "source" => "62984680648",
-        "destination" => 62111222333
+        "destination" => "62111222333"
       }
 
       call_record_after_validation = CallRecordValidator.validate(expected_start_call_record)
@@ -221,6 +236,14 @@ defmodule BillingProcessor.CallRecordValidatorTest do
     defp expected_message_error_for(field_value) do
       """
       Call record has a wrong source: '#{field_value}'. 
+      The phone number format is AAXXXXXXXXX, where AA is the area code and XXXXXXXXX is the phone number.
+      The area code is always composed of two digits while the phone number can be composed of 8 or 9 digits.
+      """
+    end
+
+    defp expected_destination_message_error_for(field_value) do
+      """
+      Call record has a wrong destination: '#{field_value}'. 
       The phone number format is AAXXXXXXXXX, where AA is the area code and XXXXXXXXX is the phone number.
       The area code is always composed of two digits while the phone number can be composed of 8 or 9 digits.
       """
