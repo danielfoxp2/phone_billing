@@ -27,7 +27,7 @@ defmodule BillingProcessor.CallRecordValidator do
     only_integer = ~r/^[0-9]+$/
 
     Regex.match?(only_integer, call_id)
-    |> validate_call_id_of(call_record) 
+    |> validate_of(call_record, "call_id") 
   end
 
   defp validate(%{"source" => source} = call_record, "source") 
@@ -61,12 +61,6 @@ defmodule BillingProcessor.CallRecordValidator do
   defp validate_timestamp_of({:ok, _}, in_call_record), do: in_call_record
   defp validate_timestamp_of(_invalid_timestamp, in_call_record) do
     ErrorMessage.for_wrong("timestamp", in_call_record["timestamp"])
-    |> include(in_call_record)
-  end
-
-  defp validate_call_id_of(true, in_call_record), do: in_call_record
-  defp validate_call_id_of(false, in_call_record) do
-    ErrorMessage.for_wrong("call_id", in_call_record["call_id"])
     |> include(in_call_record)
   end
 
