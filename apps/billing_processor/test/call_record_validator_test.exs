@@ -90,9 +90,9 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       call_record_with_alfanumeric_call_id = %{"call_id" => "554gf"}
       call_record_with_float_call_id = %{"call_id" => "554.89"}
 
-      expected_message_error_for_empty_call_id = "Call record has a wrong call_id: ''. The call id must be integer"
-      expected_message_error_for_alfanumeric_call_id = "Call record has a wrong call_id: '554gf'. The call id must be integer"
-      expected_message_error_for_float_call_id = "Call record has a wrong call_id: '554.89'. The call id must be integer"
+      expected_message_error_for_empty_call_id = "Call record has a wrong call_id: ''. The call id must be integer."
+      expected_message_error_for_alfanumeric_call_id = "Call record has a wrong call_id: '554gf'. The call id must be integer."
+      expected_message_error_for_float_call_id = "Call record has a wrong call_id: '554.89'. The call id must be integer."
 
       call_record_with_empty_call_id = CallRecordValidator.validate(call_record_with_empty_call_id)
       call_record_with_alfanumeric_call_id = CallRecordValidator.validate(call_record_with_alfanumeric_call_id)
