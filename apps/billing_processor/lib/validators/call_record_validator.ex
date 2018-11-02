@@ -17,6 +17,11 @@ defmodule BillingProcessor.CallRecordValidator do
     errors = Map.get(call_record, "errors", [])
     Map.put(call_record, "errors", [error_message] ++ errors)
   end
+
+  defp validate(%{"timestamp" => timestamp} = call_record, "timestamp") when not is_nil(timestamp) do
+    NaiveDateTime.from_iso8601(timestamp)
+    |> validate_timestamp_of(call_record)
+  end
   
   defp validate(call_record, field) do
     call_record
@@ -32,4 +37,13 @@ defmodule BillingProcessor.CallRecordValidator do
     errors = Map.get(in_call_record, "errors", [])
     Map.put(in_call_record, "errors", ["call record don't have #{field}"] ++ errors)
   end
+
+  defp validate_timestamp_of({:ok, _}, in_call_record), do: in_call_record
+  defp validate_timestamp_of(_invalid_timestamp, in_call_record) do
+    error_message = "Call record has a wrong timestamp: '#{in_call_record["timestamp"]}'. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
+
+    errors = Map.get(in_call_record, "errors", [])
+    Map.put(in_call_record, "errors", [error_message] ++ errors)
+  end
+    
 end

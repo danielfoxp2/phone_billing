@@ -30,16 +30,14 @@ defmodule BillingProcessor.CallRecordValidatorTest do
 
     test "should invalidate when it does not contains the timestamp" do
       call_record_without_timestamp = %{}
-      call_record_with_empty_timestamp = %{"timestamp" => ""}
       call_record_with_nil_timestamp = %{"timestamp" => nil}
+
       expected_message_error = "call record don't have timestamp"
 
       call_record_without_timestamp = CallRecordValidator.validate(call_record_without_timestamp)
-      call_record_with_empty_timestamp = CallRecordValidator.validate(call_record_with_empty_timestamp)
       call_record_with_nil_timestamp = CallRecordValidator.validate(call_record_with_nil_timestamp)
-
+     
       assert Enum.member?(call_record_without_timestamp["errors"], expected_message_error)
-      assert Enum.member?(call_record_with_empty_timestamp["errors"], expected_message_error)
       assert Enum.member?(call_record_with_nil_timestamp["errors"], expected_message_error)
     end
 
@@ -175,5 +173,18 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert Enum.member?(call_record_after_validation["errors"], expected_message_error_for_not_allowed_type)
     end
 
+    test "should invalidate when timestamp has not YYYY-MM-DDThh:mm:ssZ format" do
+      call_record_with_empty_timestamp = %{"timestamp" => ""}
+      call_record_with_invalid_timestamp = %{"timestamp" => "44:23"}
+
+      expected_message_error_for_empty_timestamp = "Call record has a wrong timestamp: ''. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
+      expected_message_error_for_not_allowed_timestamp = "Call record has a wrong timestamp: '44:23'. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
+      
+      call_record_with_empty_timestamp = CallRecordValidator.validate(call_record_with_empty_timestamp)
+      call_record_with_invalid_timestamp = CallRecordValidator.validate(call_record_with_invalid_timestamp)
+
+      assert Enum.member?(call_record_with_empty_timestamp["errors"], expected_message_error_for_empty_timestamp)
+      assert Enum.member?(call_record_with_invalid_timestamp["errors"], expected_message_error_for_not_allowed_timestamp)
+    end
   end
 end
