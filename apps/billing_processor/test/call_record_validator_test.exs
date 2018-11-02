@@ -74,18 +74,34 @@ defmodule BillingProcessor.CallRecordValidatorTest do
 
     test "should invalidate when it does not contains the call id" do
       call_record_without_call_id = %{}
-      call_record_with_empty_call_id = %{"call_id" => ""}
       call_record_with_nil_call_id = %{"call_id" => nil}
+
       expected_message_error = "call record don't have call_id"
-
+      
       call_record_without_call_id = CallRecordValidator.validate(call_record_without_call_id)
-      call_record_with_empty_call_id = CallRecordValidator.validate(call_record_with_empty_call_id)
       call_record_with_nil_call_id = CallRecordValidator.validate(call_record_with_nil_call_id)
-
+      
       assert Enum.member?(call_record_without_call_id["errors"], expected_message_error)
-      assert Enum.member?(call_record_with_empty_call_id["errors"], expected_message_error)
       assert Enum.member?(call_record_with_nil_call_id["errors"], expected_message_error)
     end 
+
+    test "should invalidate when call id is not a integer" do
+      call_record_with_empty_call_id = %{"call_id" => ""}
+      call_record_with_alfanumeric_call_id = %{"call_id" => "554gf"}
+      call_record_with_float_call_id = %{"call_id" => "554.89"}
+
+      expected_message_error_for_empty_call_id = "Call record has a wrong call id: ''. The call id must be integer"
+      expected_message_error_for_alfanumeric_call_id = "Call record has a wrong call id: '554gf'. The call id must be integer"
+      expected_message_error_for_float_call_id = "Call record has a wrong call id: '554.89'. The call id must be integer"
+
+      call_record_with_empty_call_id = CallRecordValidator.validate(call_record_with_empty_call_id)
+      call_record_with_alfanumeric_call_id = CallRecordValidator.validate(call_record_with_alfanumeric_call_id)
+      call_record_with_float_call_id = CallRecordValidator.validate(call_record_with_float_call_id)
+
+      assert Enum.member?(call_record_with_empty_call_id["errors"], expected_message_error_for_empty_call_id)
+      assert Enum.member?(call_record_with_alfanumeric_call_id["errors"], expected_message_error_for_alfanumeric_call_id)
+      assert Enum.member?(call_record_with_float_call_id["errors"], expected_message_error_for_float_call_id)
+    end
 
     test "should invalidate when it does not contains the source in start record" do
       call_record_without_source = %{"type" => "start"}
@@ -162,7 +178,7 @@ defmodule BillingProcessor.CallRecordValidatorTest do
         "id" => 1,
         "type" => "start",
         "timestamp" => "1970-01-01 00:00:01",
-        "call_id" => 123,
+        "call_id" => "123",
         "source" => 62984680648,
         "destination" => 62111222333
       }
@@ -178,7 +194,7 @@ defmodule BillingProcessor.CallRecordValidatorTest do
         "id" => 1,
         "type" => "end",
         "timestamp" => "1970-01-01 00:00:01",
-        "call_id" => 123
+        "call_id" => "123"
       }
 
       call_record_after_validation = CallRecordValidator.validate(expected_end_call_record)
