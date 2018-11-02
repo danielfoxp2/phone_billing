@@ -54,14 +54,9 @@ defmodule BillingProcessor.CallRecordValidator do
     |> validate_of(call_record, field)
   end
 
-  defp validate("", in_call_record, field), do: mount_error_for(field, in_call_record)
-  defp validate(nil, in_call_record, field), do: mount_error_for(field, in_call_record)
+  defp validate("", in_call_record, field), do: ErrorMessage.for_wrong(field) |> include(in_call_record)
+  defp validate(nil, in_call_record, field), do: ErrorMessage.for_wrong(field) |> include(in_call_record)
   defp validate(_field_value, call_record, _field), do: call_record
-
-  defp mount_error_for(field, in_call_record) do
-    errors = Map.get(in_call_record, "errors", [])
-    Map.put(in_call_record, "errors", ["call record don't have #{field}"] ++ errors)
-  end
 
   defp validate_timestamp_of({:ok, _}, in_call_record), do: in_call_record
   defp validate_timestamp_of(_invalid_timestamp, in_call_record) do
