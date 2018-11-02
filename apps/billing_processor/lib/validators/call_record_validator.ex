@@ -34,14 +34,14 @@ defmodule BillingProcessor.CallRecordValidator do
     only_integer_with_ten_or_eleven_digits = ~r/^\d{10,11}+$/
     
     Regex.match?(only_integer_with_ten_or_eleven_digits, source)
-    |> validate_source_of(call_record)
+    |> validate_of(call_record, "source")
   end
 
   defp validate(%{"destination" => destination} = call_record, "destination") when not is_nil(destination) do
     only_integer_with_ten_or_eleven_digits = ~r/^\d{10,11}+$/
     
     Regex.match?(only_integer_with_ten_or_eleven_digits, destination)
-    |> validate_destination_of(call_record)
+    |> validate_of(call_record, "destination")
   end
 
   defp validate(call_record, field) do
@@ -75,16 +75,10 @@ defmodule BillingProcessor.CallRecordValidator do
     Map.put(in_call_record, "errors", [error_message] ++ errors)
   end
 
-  defp validate_source_of(true, in_call_record), do: in_call_record
-  defp validate_source_of(false, in_call_record) do
+  defp validate_of(true, in_call_record, _field), do: in_call_record
+  defp validate_of(false, in_call_record, field) do
     errors = Map.get(in_call_record, "errors", [])
-    Map.put(in_call_record, "errors", [error_message_for_phone_number_of("source", in_call_record["source"])] ++ errors)
-  end
-
-  defp validate_destination_of(true, in_call_record), do: in_call_record
-  defp validate_destination_of(false, in_call_record) do
-    errors = Map.get(in_call_record, "errors", [])
-    Map.put(in_call_record, "errors", [error_message_for_phone_number_of("destination", in_call_record["destination"])] ++ errors)
+    Map.put(in_call_record, "errors", [error_message_for_phone_number_of(field, in_call_record[field])] ++ errors)
   end
 
   defp error_message_for_phone_number_of(field, value) do
