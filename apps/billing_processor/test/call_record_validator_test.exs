@@ -105,16 +105,13 @@ defmodule BillingProcessor.CallRecordValidatorTest do
 
     test "should invalidate when it does not contains the source in start record" do
       call_record_without_source = %{"type" => "start"}
-      call_record_with_empty_source = %{"type" => "start", "source" => ""}
       call_record_with_nil_source = %{"type" => "start", "source" => nil}
       expected_message_error = "call record don't have source"
 
       call_record_without_source = CallRecordValidator.validate(call_record_without_source)
-      call_record_with_empty_source = CallRecordValidator.validate(call_record_with_empty_source)
       call_record_with_nil_source = CallRecordValidator.validate(call_record_with_nil_source)
 
       assert Enum.member?(call_record_without_source["errors"], expected_message_error)
-      assert Enum.member?(call_record_with_empty_source["errors"], expected_message_error)
       assert Enum.member?(call_record_with_nil_source["errors"], expected_message_error)
     end
 
@@ -136,6 +133,24 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       assert actual_result_without_source == expected_result
       assert actual_result_with_empty_source == expected_result
       assert actual_result_with_nil_source == expected_result
+    end
+
+    test "should invalidate when source has not AAXXXXXXXX or AAXXXXXXXXX format" do
+      empty_source = ""
+      alfanumeric_source = "62432224x"
+      source_with_invalid_lenght = "6243222"
+
+      call_record_with_empty_source = %{"type" => "start", "source" => empty_source}
+      call_record_with_alfanumeric_source = %{"type" => "start", "source" => alfanumeric_source}
+      call_record_with_invalid_lenght_source = %{"type" => "start", "source" => source_with_invalid_lenght}
+
+      call_record_with_empty_source = CallRecordValidator.validate(call_record_with_empty_source)
+      call_record_with_alfanumeric_source = CallRecordValidator.validate(call_record_with_alfanumeric_source)
+      call_record_with_invalid_lenght_source = CallRecordValidator.validate(call_record_with_invalid_lenght_source)
+
+      assert Enum.member?(call_record_with_empty_source["errors"], expected_message_error_for(empty_source))
+      assert Enum.member?(call_record_with_alfanumeric_source["errors"], expected_message_error_for(alfanumeric_source))
+      assert Enum.member?(call_record_with_invalid_lenght_source["errors"], expected_message_error_for(source_with_invalid_lenght))
     end
 
     test "should invalidate when it does not contains the destination in start record" do
@@ -179,7 +194,7 @@ defmodule BillingProcessor.CallRecordValidatorTest do
         "type" => "start",
         "timestamp" => "1970-01-01 00:00:01",
         "call_id" => "123",
-        "source" => 62984680648,
+        "source" => "62984680648",
         "destination" => 62111222333
       }
 
@@ -201,6 +216,14 @@ defmodule BillingProcessor.CallRecordValidatorTest do
 
       assert call_record_after_validation["errors"] == nil
       assert call_record_after_validation == expected_end_call_record
+    end
+
+    defp expected_message_error_for(field_value) do
+      """
+      Call record has a wrong source: '#{field_value}'. 
+      The phone number format is AAXXXXXXXXX, where AA is the area code and XXXXXXXXX is the phone number.
+      The area code is always composed of two digits while the phone number can be composed of 8 or 9 digits.
+      """
     end
 
   end
