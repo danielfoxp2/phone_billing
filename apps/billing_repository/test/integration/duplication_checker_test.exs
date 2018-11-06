@@ -3,8 +3,8 @@ defmodule DuplicationCheckerTest do
   alias BillingRepository.DuplicationChecker
 
   test "should return a call record id for a given id if it is duplicated" do
-    call_records = [%{"id" => 1, "call_id" => 1}]
-    expected_result = [[id: 1, call_id: 1]]
+    call_records = [%{"id" => 1}]
+    expected_result = [[id: 1]]
 
     duplicated_keys = DuplicationChecker.for(call_records)
 
