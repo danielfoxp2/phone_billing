@@ -20,4 +20,13 @@ defmodule DuplicationCheckerTest do
     assert duplicated_keys == expected_result
   end
 
+  test "should return the duplicated records given a list of ids or call_ids" do
+    call_records = [%{"id" => 1, "call_id" => 1}, %{"id" => 3, "call_id" => 2}]
+    expected_result = [id: 1, call_id: 1, id: 3, call_id: 2]
+
+    duplicated_keys = DuplicationChecker.for(call_records)
+
+    assert duplicated_keys == expected_result
+  end
+
 end
