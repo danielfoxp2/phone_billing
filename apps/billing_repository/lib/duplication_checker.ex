@@ -4,7 +4,7 @@ defmodule BillingRepository.DuplicationChecker do
 
   def for(call_records) do
     call_records
-    |> Enum.map(fn call_record -> parallel(call_record) end)
+    |> Enum.flat_map(fn call_record -> parallel(call_record) end)
   end
 
   def parallel(call_record) do
