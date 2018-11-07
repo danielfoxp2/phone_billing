@@ -21,9 +21,9 @@ defmodule PhoneBilling.MixProject do
 
   defp aliases do
     [
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run apps/billing_repository/priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test":       ["ecto.drop", "ecto.create", "ecto.migrate", "test"]
+      "test":       ["ecto.reset", "test"]
     ]
   end
 end
