@@ -2,8 +2,9 @@ defmodule BillingRepository.Calls.CallRecord do
   use Ecto.Schema
   import Ecto.Changeset
 
-
+  @primary_key false
   schema "call_records" do
+    field :id, :string, primary_key: true
     field :call_id, :integer
     field :destination, :string
     field :source, :string
