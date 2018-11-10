@@ -1,12 +1,16 @@
 defmodule BillingProcessor.DuplicationValidator do
   alias BillingProcessor.Error
 
-  def check_duplicates_in(found_in_persisted_call_records, call_records_being_inserted) do   
+  def add_errors_for_duplicated(call_records_being_inserted) do   
     call_records_being_inserted
     |> add_errors_for_duplicated("id")
-    |> add_errors_for_duplicated("id", found_in_persisted_call_records)
     |> add_errors_for_duplicated("call_id")
-    |> add_errors_for_duplicated("call_id", found_in_persisted_call_records)
+  end
+
+  def add_errors_for(call_records_being_inserted, found_duplicated_in_database) do   
+    call_records_being_inserted
+    |> add_errors_for_duplicated("id", found_duplicated_in_database)
+    |> add_errors_for_duplicated("call_id", found_duplicated_in_database)
   end
 
   defp add_errors_for_duplicated(in_call_records_being_inserted, for_this_field) do
