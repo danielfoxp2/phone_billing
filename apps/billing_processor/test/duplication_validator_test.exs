@@ -3,7 +3,7 @@ defmodule BillingProcessor.DuplicationValidatorTest do
   alias BillingProcessor.DuplicationValidator
 
   describe "call record id duplication checking" do
-    test "that its add an error message when already exists persisted the same call record id" do
+    test "that its add an error message when already exists the same call record id persisted" do
       duplicated_id = "1"
       duplicated_persisted_call_records = [id: duplicated_id]
       call_records = [%{"id" => duplicated_id}, %{"id" => "2"}]
