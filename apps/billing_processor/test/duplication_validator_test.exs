@@ -65,6 +65,17 @@ defmodule BillingProcessor.DuplicationValidatorTest do
 
       assert actual_result == expected_call_records
     end
+
+    test "should do nothing when there is no call_id in call record" do
+      duplicated_persisted_call_records = [call_id: 1]
+
+      call_records = [%{"call_id" => ""}, %{"id" => "2"}, %{"call_id" => nil}]
+      expected_call_records = [%{"call_id" => ""}, %{"id" => "2"}, %{"call_id" => nil}]
+
+      actual_result = DuplicationValidator.check_duplicates_in(duplicated_persisted_call_records, call_records)
+
+      assert actual_result == expected_call_records
+    end
   end 
 
 end
