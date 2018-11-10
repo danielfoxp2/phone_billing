@@ -2,10 +2,9 @@ defmodule BillingProcessor.ErrorMessage do
 
   def for_wrong({:structure, field}, _value), do: "call record don't have #{field}"
   
-  def for_wrong("id", value) do
-    "call record with id: #{value} already exists in database"
-  end
-
+  def for_wrong({:duplicated_in_database, _field}, value), do:  "call record with id: #{value} already exists in database"
+  def for_wrong({:duplicated_in_list_being_inserted, _field}, value), do:  "call record with id: #{value} is duplicated in call records being inserted"
+ 
   def for_wrong("type" = field, value) do
     "#{call_record_has_a_wrong(field, value)}. Only 'start' and 'end' types are allowed."
   end

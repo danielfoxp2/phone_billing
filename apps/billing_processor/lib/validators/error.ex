@@ -7,6 +7,10 @@ defmodule BillingProcessor.Error do
   end
 
   defp mount_error(false, in_call_record, _field), do: in_call_record
+  defp mount_error(true, in_call_record, {_error_type, field} = field_with_specified_error_type) do
+    ErrorMessage.for_wrong(field_with_specified_error_type, in_call_record[field])
+    |> include(in_call_record)
+  end
   defp mount_error(true, in_call_record, field) do
     ErrorMessage.for_wrong(field, in_call_record[field])
     |> include(in_call_record)
