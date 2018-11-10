@@ -39,4 +39,20 @@ defmodule BillingProcessor.DuplicationValidatorTest do
       assert actual_result == expected_call_records
     end
   end
+
+  describe "call record call_id duplication checking" do
+    test "that its add an error message when there are more than two call ids with the same value within call records to be persisted" do
+      duplicated_call_id = "1"
+      duplicated_persisted_call_records = [call_id: "1"]
+      call_records = [%{"call_id" => duplicated_call_id}, %{"call_id" => duplicated_call_id}, %{"call_id" => "2"}, %{"call_id" => duplicated_call_id}]
+
+      error_message = "call record with call_id: #{duplicated_call_id} is duplicated in call records being inserted"
+            
+      expected_call_records = [%{"call_id" => "1", "errors" => [error_message]}, %{"call_id" => "1", "errors" => [error_message]}, %{"call_id" => "2"}, %{"call_id" => "1", "errors" => [error_message]}]
+      actual_result = DuplicationValidator.check_duplicates_in(duplicated_persisted_call_records, call_records)
+
+      assert actual_result == expected_call_records
+    end
+  end 
+
 end
