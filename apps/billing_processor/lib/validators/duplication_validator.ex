@@ -1,55 +1,33 @@
 defmodule BillingProcessor.DuplicationValidator do
   alias BillingProcessor.Error
 
-  def check_duplicates_in(duplicated_persisted_call_records, call_records_being_inserted) do
-    call_records_ids_from_database = Keyword.get_values(duplicated_persisted_call_records, :id)
-    call_records_call_ids_from_database = Keyword.get_values(duplicated_persisted_call_records, :call_id)
-
-    add_errors_for_call_records_ids_duplicated_in(call_records_being_inserted)
-    |> add_errors_of_duplicated_call_records_for("id", call_records_ids_from_database)
-    |> add_errors_for_duplicated_call_ids
-    |> add_errors_of_duplicated_call_records_for("call_id", call_records_call_ids_from_database)
+  def check_duplicates_in(found_in_persisted_call_records, call_records_being_inserted) do   
+    call_records_being_inserted
+    |> add_errors_for_duplicated("id")
+    |> add_errors_for_duplicated("id", found_in_persisted_call_records)
+    |> add_errors_for_duplicated("call_id")
+    |> add_errors_for_duplicated("call_id", found_in_persisted_call_records)
   end
 
-  defp add_errors_for_call_records_ids_duplicated_in(call_records_being_inserted) do
-    Enum.map(call_records_being_inserted, fn call_record -> 
-      count_how_much_duplicated_ids_of_this(call_record, call_records_being_inserted)
-      |> mount_error_if_needed_for(call_record, "id")
+  defp add_errors_for_duplicated(in_call_records_being_inserted, for_this_field) do
+    Enum.map(in_call_records_being_inserted, fn call_record -> 
+      count_how_much_duplicated(for_this_field, call_record, in_call_records_being_inserted)
+      |> mount_error_if_needed_for(call_record, for_this_field)
     end)
   end
 
-  defp add_errors_of_duplicated_call_records_for(call_records_being_inserted, field, duplicated_database_ids) do
+  defp add_errors_for_duplicated(call_records_being_inserted, field, having_this_duplicated_registers_in_database) do
     Enum.map(call_records_being_inserted, fn call_record -> 
-      duplicated_database_ids
+      having_this_duplicated_registers_in_database
+      |> Keyword.get_values(String.to_atom(field))
       |> has?(field, call_record)
       |> mount_error_if_needed_for(call_record, field)
     end)
   end
 
-  defp add_errors_for_duplicated_call_ids(in_call_records_being_inserted) do
-    Enum.map(in_call_records_being_inserted, fn call_record -> 
-      count_how_much_duplicated_call_ids_of_this(call_record, in_call_records_being_inserted)
-      |> mount_error_if_needed_for(call_record, "call_id")
-    end)
-  end
-
-  defp add_errors_of_duplicated_call_ids_in(call_records_being_inserted, duplicated_database_ids) do
-    Enum.map(call_records_being_inserted, fn call_record -> 
-      duplicated_database_ids
-      |> has_call_id?(call_record)
-      |> mount_error_if_needed_for(call_record, "call_id")
-    end)
-  end
-
-  defp count_how_much_duplicated_ids_of_this(call_record, in_call_records_being_inserted) do
+  defp count_how_much_duplicated(field, call_record, in_call_records_being_inserted) do
     Enum.count(in_call_records_being_inserted, fn call_record_to_be_inserted -> 
-      equals?(call_record["id"], call_record_to_be_inserted["id"]) 
-    end)
-  end
-
-  defp count_how_much_duplicated_call_ids_of_this(call_record, in_call_records_being_inserted) do
-    Enum.count(in_call_records_being_inserted, fn call_record_to_be_inserted -> 
-      equals?(call_record["call_id"], call_record_to_be_inserted["call_id"]) 
+      equals?(call_record[field], call_record_to_be_inserted[field]) 
     end)
   end
 
