@@ -19,6 +19,12 @@ defmodule BillingProcessor.DuplicationValidator do
     end)
   end
 
+  defp add_errors_for_duplicated(call_records_being_inserted, field, having_this_duplicated_registers_in_database) do
+    Enum.map(call_records_being_inserted, fn call_record -> 
+      mount_error_in_parallel(call_record, field, having_this_duplicated_registers_in_database, &build_error/3)
+    end)
+  end
+
   defp mount_error_in_parallel(for_this_field, call_record, in_call_records_being_inserted, mount_error_function) do
     task = Task.async(fn -> mount_error_function.(for_this_field, call_record, in_call_records_being_inserted) end)
     Task.await(task)
@@ -29,13 +35,7 @@ defmodule BillingProcessor.DuplicationValidator do
     |> mount_error_if_needed_for(call_record, for_this_field)
   end
 
-  defp add_errors_for_duplicated(call_records_being_inserted, field, having_this_duplicated_registers_in_database) do
-    Enum.map(call_records_being_inserted, fn call_record -> 
-      mount_error_in_parallel(call_record, field, having_this_duplicated_registers_in_database, &error/3)
-    end)
-  end
-
-  defp error(call_record, field, having_this_duplicated_registers_in_database) do
+  defp build_error(call_record, field, having_this_duplicated_registers_in_database) do
     having_this_duplicated_registers_in_database
     |> Keyword.get_values(String.to_atom(field))
     |> has?(field, call_record)
