@@ -4,12 +4,8 @@ defmodule BillingRepository.DatabaseDuplication do
 
   def search_for(call_records) do
     call_records
-    |> Enum.flat_map(fn call_record -> parallel(call_record) end)
-  end
-
-  def parallel(call_record) do
-    task = Task.async(fn -> get_duplicated(call_record) end)
-    Task.await(task)
+    |> Enum.map(fn call_record -> Task.async(fn -> get_duplicated(call_record) end) end)
+    |> Enum.flat_map(&Task.await/1)
   end
 
   defp get_duplicated(%{"id" => id, "call_id" => call_id}) do
