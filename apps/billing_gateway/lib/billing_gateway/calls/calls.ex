@@ -59,9 +59,24 @@ defmodule BillingGateway.Calls do
   defp get_postback_url_from(%{"postback_url" => postback_url}), do: postback_url
   defp get_postback_url_from(_call_records_params), do: nil
 
-  defp process_call_records({:ok, _}, call_records_params), do: {:ok, get_protocol_number()}
-  defp process_call_records(processing_cant_proceed, _call_records_params), do: processing_cant_proceed
+  defp process_call_records({:postback_url_error, _} = processing_cant_proceed, _call_records_params), do: processing_cant_proceed
+  defp process_call_records({:ok, _}, call_records_params) do
+    Task.start(fn -> process(call_records_params) end)
 
+    {:ok, get_protocol_number()}
+  end
+
+  defp process(call_records) do
+    IO.puts " rodou process"
+    # call_records
+    # |> CallRecordValidator.validate()
+    # |> DuplicationChecker.for()
+    # |> DuplicationValidator.add_errors_for_duplicated()
+    # |> CallStructure.validate_pair_of
+    #|> inserir no banco quem nao tem error key
+    #|> montar retorno 
+  end
+  
   defp get_protocol_number(), do: Protocol.new_number
   @doc """
   Updates a call_record.
