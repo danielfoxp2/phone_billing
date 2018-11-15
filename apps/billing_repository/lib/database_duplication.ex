@@ -1,8 +1,8 @@
-defmodule BillingRepository.DuplicationChecker do
+defmodule BillingRepository.DatabaseDuplication do
   alias BillingRepository.Repo
   use Task
 
-  def for(call_records) do
+  def search_for(call_records) do
     call_records
     |> Enum.flat_map(fn call_record -> parallel(call_record) end)
   end
