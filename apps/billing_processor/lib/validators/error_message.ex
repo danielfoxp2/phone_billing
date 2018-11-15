@@ -4,7 +4,7 @@ defmodule BillingProcessor.ErrorMessage do
   
   def for_wrong({:duplicated_in_database, field}, value), do:  "call record with #{field}: #{value} already exists in database"
   def for_wrong({:duplicated_in_list_being_inserted, field}, value), do:  "call record with #{field}: #{value} is duplicated in call records being inserted"
-  def for_wrong({:pair_dont_match, _field}, call_id_value) do
+  def for_wrong({:pair_is_not_valid, _field}, call_id_value) do
     "Inconsistent call for call_id '#{call_id_value}'. A call is a composition of two record types, 'start' and 'end', with the same call id."
   end
 
