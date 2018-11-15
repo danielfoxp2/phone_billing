@@ -4,10 +4,19 @@ defmodule BillingProcessor.CallRecordValidator do
 
   def validate(call_records) do
     call_records
-    |> Enum.map(fn call_record -> process_validation(call_record) end)
+    |> process_validation_in_parallel
+  end
+
+  defp process_validation_in_parallel(of_these_call_records) do
+    Enum.map(of_these_call_records, fn call_record -> process_validation(call_record) end)
   end
 
   defp process_validation(call_record) do
+    task = Task.async(fn -> process(call_record) end)
+    Task.await(task)
+  end
+
+  defp process(call_record) do
     call_record
     |> validate("id")
     |> validate("type")
