@@ -1,6 +1,6 @@
-defmodule BillingProcessor.CallRecordValidatorTest do
+defmodule BillingProcessor.CallRecordContentValidatorTest do
   use ExUnit.Case
-  alias BillingProcessor.CallRecordValidator
+  alias BillingProcessor.CallRecordContentValidator
 
   describe "call record validation" do
     test "should invalidate when it does not contains the id" do
@@ -9,9 +9,9 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       call_record_with_nil_id = [%{"id" => nil}]
       expected_message_error = "call record don't have id"
 
-      [actual_call_record_without_id | _not_used] = CallRecordValidator.validate(call_record_without_id)
-      [actual_call_record_with_empty_id | _not_used] = CallRecordValidator.validate(call_record_with_empty_id)
-      [actual_call_record_with_nil_id | _not_used] = CallRecordValidator.validate(call_record_with_nil_id)
+      [actual_call_record_without_id | _not_used] = CallRecordContentValidator.validate(call_record_without_id)
+      [actual_call_record_with_empty_id | _not_used] = CallRecordContentValidator.validate(call_record_with_empty_id)
+      [actual_call_record_with_nil_id | _not_used] = CallRecordContentValidator.validate(call_record_with_nil_id)
 
       assert Enum.member?(actual_call_record_without_id["errors"], expected_message_error)
       assert Enum.member?(actual_call_record_with_empty_id["errors"], expected_message_error)
@@ -23,7 +23,7 @@ defmodule BillingProcessor.CallRecordValidatorTest do
      
       expected_message_error = "call record don't have type"
 
-      [actual_call_record_without_type | _not_used] = CallRecordValidator.validate(call_record_without_type)
+      [actual_call_record_without_type | _not_used] = CallRecordContentValidator.validate(call_record_without_type)
      
       assert Enum.member?(actual_call_record_without_type["errors"], expected_message_error)
     end
@@ -36,9 +36,9 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       expected_message_error_for_nil_and_empty_type = "Call record has a wrong type: ''. Only 'start' and 'end' types are allowed."
       expected_message_error_for_not_allowed_type = "Call record has a wrong type: 'new_type'. Only 'start' and 'end' types are allowed."
 
-      [actual_call_record_with_empty_type | _not_used] = CallRecordValidator.validate(call_record_with_empty_type)
-      [actual_call_record_with_nil_type | _not_used] = CallRecordValidator.validate(call_record_with_nil_type)
-      [actual_call_record_after_validation | _not_used] = CallRecordValidator.validate(call_record_with_not_allowed_type)
+      [actual_call_record_with_empty_type | _not_used] = CallRecordContentValidator.validate(call_record_with_empty_type)
+      [actual_call_record_with_nil_type | _not_used] = CallRecordContentValidator.validate(call_record_with_nil_type)
+      [actual_call_record_after_validation | _not_used] = CallRecordContentValidator.validate(call_record_with_not_allowed_type)
 
       assert Enum.member?(actual_call_record_with_empty_type["errors"], expected_message_error_for_nil_and_empty_type)
       assert Enum.member?(actual_call_record_with_nil_type["errors"], expected_message_error_for_nil_and_empty_type)
@@ -51,8 +51,8 @@ defmodule BillingProcessor.CallRecordValidatorTest do
 
       expected_message_error = "call record don't have timestamp"
 
-      [actual_call_record_without_timestamp | _not_used] = CallRecordValidator.validate(call_record_without_timestamp)
-      [actual_call_record_with_nil_timestamp | _not_used] = CallRecordValidator.validate(call_record_with_nil_timestamp)
+      [actual_call_record_without_timestamp | _not_used] = CallRecordContentValidator.validate(call_record_without_timestamp)
+      [actual_call_record_with_nil_timestamp | _not_used] = CallRecordContentValidator.validate(call_record_with_nil_timestamp)
      
       assert Enum.member?(actual_call_record_without_timestamp["errors"], expected_message_error)
       assert Enum.member?(actual_call_record_with_nil_timestamp["errors"], expected_message_error)
@@ -65,8 +65,8 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       expected_message_error_for_empty_timestamp = "Call record has a wrong timestamp: ''. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
       expected_message_error_for_not_allowed_timestamp = "Call record has a wrong timestamp: '44:23'. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
       
-      [actual_call_record_with_empty_timestamp | _not_used] = CallRecordValidator.validate(call_record_with_empty_timestamp)
-      [actual_call_record_with_invalid_timestamp | _not_used] = CallRecordValidator.validate(call_record_with_invalid_timestamp)
+      [actual_call_record_with_empty_timestamp | _not_used] = CallRecordContentValidator.validate(call_record_with_empty_timestamp)
+      [actual_call_record_with_invalid_timestamp | _not_used] = CallRecordContentValidator.validate(call_record_with_invalid_timestamp)
 
       assert Enum.member?(actual_call_record_with_empty_timestamp["errors"], expected_message_error_for_empty_timestamp)
       assert Enum.member?(actual_call_record_with_invalid_timestamp["errors"], expected_message_error_for_not_allowed_timestamp)
@@ -78,8 +78,8 @@ defmodule BillingProcessor.CallRecordValidatorTest do
 
       expected_message_error = "call record don't have call_id"
       
-      [actual_call_record_without_call_id | _not_used] = CallRecordValidator.validate(call_record_without_call_id)
-      [actual_call_record_with_nil_call_id | _not_used] = CallRecordValidator.validate(call_record_with_nil_call_id)
+      [actual_call_record_without_call_id | _not_used] = CallRecordContentValidator.validate(call_record_without_call_id)
+      [actual_call_record_with_nil_call_id | _not_used] = CallRecordContentValidator.validate(call_record_with_nil_call_id)
       
       assert Enum.member?(actual_call_record_without_call_id["errors"], expected_message_error)
       assert Enum.member?(actual_call_record_with_nil_call_id["errors"], expected_message_error)
@@ -94,9 +94,9 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       expected_message_error_for_alfanumeric_call_id = "Call record has a wrong call_id: '554gf'. The call id must be integer."
       expected_message_error_for_float_call_id = "Call record has a wrong call_id: '554.89'. The call id must be integer."
 
-      [actual_call_record_with_empty_call_id | _not_used] = CallRecordValidator.validate(call_record_with_empty_call_id)
-      [actual_call_record_with_alfanumeric_call_id | _not_used] = CallRecordValidator.validate(call_record_with_alfanumeric_call_id)
-      [actual_call_record_with_float_call_id | _not_used] = CallRecordValidator.validate(call_record_with_float_call_id)
+      [actual_call_record_with_empty_call_id | _not_used] = CallRecordContentValidator.validate(call_record_with_empty_call_id)
+      [actual_call_record_with_alfanumeric_call_id | _not_used] = CallRecordContentValidator.validate(call_record_with_alfanumeric_call_id)
+      [actual_call_record_with_float_call_id | _not_used] = CallRecordContentValidator.validate(call_record_with_float_call_id)
 
       assert Enum.member?(actual_call_record_with_empty_call_id["errors"], expected_message_error_for_empty_call_id)
       assert Enum.member?(actual_call_record_with_alfanumeric_call_id["errors"], expected_message_error_for_alfanumeric_call_id)
@@ -108,8 +108,8 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       call_record_with_nil_source = [%{"type" => "start", "source" => nil}]
       expected_message_error = "call record don't have source"
 
-      [actual_call_record_without_source | _not_used] = CallRecordValidator.validate(call_record_without_source)
-      [actual_call_record_with_nil_source | _not_used] = CallRecordValidator.validate(call_record_with_nil_source)
+      [actual_call_record_without_source | _not_used] = CallRecordContentValidator.validate(call_record_without_source)
+      [actual_call_record_with_nil_source | _not_used] = CallRecordContentValidator.validate(call_record_with_nil_source)
 
       assert Enum.member?(actual_call_record_without_source["errors"], expected_message_error)
       assert Enum.member?(actual_call_record_with_nil_source["errors"], expected_message_error)
@@ -122,9 +122,9 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       expected_message_error = "call record don't have source"
       expected_result = false
     
-      [call_record_without_source | _not_used] = CallRecordValidator.validate(call_record_without_source)
-      [call_record_with_empty_source | _not_used] = CallRecordValidator.validate(call_record_with_empty_source)
-      [call_record_with_nil_source | _not_used] = CallRecordValidator.validate(call_record_with_nil_source)
+      [call_record_without_source | _not_used] = CallRecordContentValidator.validate(call_record_without_source)
+      [call_record_with_empty_source | _not_used] = CallRecordContentValidator.validate(call_record_with_empty_source)
+      [call_record_with_nil_source | _not_used] = CallRecordContentValidator.validate(call_record_with_nil_source)
 
       actual_result_without_source = Enum.member?(call_record_without_source["errors"], expected_message_error)
       actual_result_with_empty_source = Enum.member?(call_record_with_empty_source["errors"], expected_message_error)
@@ -144,9 +144,9 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       call_record_with_alfanumeric_source = [%{"type" => "start", "source" => alfanumeric_source}]
       call_record_with_invalid_lenght_source = [%{"type" => "start", "source" => source_with_invalid_lenght}]
 
-      [actual_call_record_with_empty_source | _not_used] = CallRecordValidator.validate(call_record_with_empty_source)
-      [actual_call_record_with_alfanumeric_source | _not_used] = CallRecordValidator.validate(call_record_with_alfanumeric_source)
-      [actual_call_record_with_invalid_lenght_source | _not_used] = CallRecordValidator.validate(call_record_with_invalid_lenght_source)
+      [actual_call_record_with_empty_source | _not_used] = CallRecordContentValidator.validate(call_record_with_empty_source)
+      [actual_call_record_with_alfanumeric_source | _not_used] = CallRecordContentValidator.validate(call_record_with_alfanumeric_source)
+      [actual_call_record_with_invalid_lenght_source | _not_used] = CallRecordContentValidator.validate(call_record_with_invalid_lenght_source)
 
       assert Enum.member?(actual_call_record_with_empty_source["errors"], expected_message_error_for(empty_source))
       assert Enum.member?(actual_call_record_with_alfanumeric_source["errors"], expected_message_error_for(alfanumeric_source))
@@ -158,8 +158,8 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       call_record_with_nil_destination = [%{"type" => "start", "destination" => nil}]
       expected_message_error = "call record don't have destination"
 
-      [actual_call_record_without_destination | _not_used] = CallRecordValidator.validate(call_record_without_destination)
-      [actual_call_record_with_nil_destination | _not_used] = CallRecordValidator.validate(call_record_with_nil_destination)
+      [actual_call_record_without_destination | _not_used] = CallRecordContentValidator.validate(call_record_without_destination)
+      [actual_call_record_with_nil_destination | _not_used] = CallRecordContentValidator.validate(call_record_with_nil_destination)
 
       assert Enum.member?(actual_call_record_without_destination["errors"], expected_message_error)
       assert Enum.member?(actual_call_record_with_nil_destination["errors"], expected_message_error)
@@ -172,9 +172,9 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       expected_message_error = "call record don't have destination"
       expected_result = false
     
-      [call_record_without_destination | _not_used] = CallRecordValidator.validate(call_record_without_destination)
-      [call_record_with_empty_destination | _not_used] = CallRecordValidator.validate(call_record_with_empty_destination)
-      [call_record_with_nil_destination | _not_used] = CallRecordValidator.validate(call_record_with_nil_destination)
+      [call_record_without_destination | _not_used] = CallRecordContentValidator.validate(call_record_without_destination)
+      [call_record_with_empty_destination | _not_used] = CallRecordContentValidator.validate(call_record_with_empty_destination)
+      [call_record_with_nil_destination | _not_used] = CallRecordContentValidator.validate(call_record_with_nil_destination)
 
       actual_result_without_destination = Enum.member?(call_record_without_destination["errors"], expected_message_error)
       actual_result_with_empty_destination = Enum.member?(call_record_with_empty_destination["errors"], expected_message_error)
@@ -194,9 +194,9 @@ defmodule BillingProcessor.CallRecordValidatorTest do
       call_record_with_alfanumeric_destination = [%{"type" => "start", "destination" => alfanumeric_destination}]
       call_record_with_invalid_lenght_destination = [%{"type" => "start", "destination" => destination_with_invalid_lenght}]
 
-      [actual_call_record_with_empty_destination | _not_used] = CallRecordValidator.validate(call_record_with_empty_destination)
-      [actual_call_record_with_alfanumeric_destination | _not_used] = CallRecordValidator.validate(call_record_with_alfanumeric_destination)
-      [actual_call_record_with_invalid_lenght_destination | _not_used] = CallRecordValidator.validate(call_record_with_invalid_lenght_destination)
+      [actual_call_record_with_empty_destination | _not_used] = CallRecordContentValidator.validate(call_record_with_empty_destination)
+      [actual_call_record_with_alfanumeric_destination | _not_used] = CallRecordContentValidator.validate(call_record_with_alfanumeric_destination)
+      [actual_call_record_with_invalid_lenght_destination | _not_used] = CallRecordContentValidator.validate(call_record_with_invalid_lenght_destination)
 
       assert Enum.member?(actual_call_record_with_empty_destination["errors"], expected_destination_message_error_for(empty_destination))
       assert Enum.member?(actual_call_record_with_alfanumeric_destination["errors"], expected_destination_message_error_for(alfanumeric_destination))
@@ -222,7 +222,7 @@ defmodule BillingProcessor.CallRecordValidatorTest do
         "destination" => "62111222333"
       }
 
-      [actual_call_record_after_validation | _not_used] = CallRecordValidator.validate(call_record)
+      [actual_call_record_after_validation | _not_used] = CallRecordContentValidator.validate(call_record)
 
       assert actual_call_record_after_validation["errors"] == nil
       assert actual_call_record_after_validation == expected_start_call_record
@@ -243,7 +243,7 @@ defmodule BillingProcessor.CallRecordValidatorTest do
         "call_id" => "123"
       }
 
-      [actual_call_record_after_validation | _not_used] = CallRecordValidator.validate(call_record)
+      [actual_call_record_after_validation | _not_used] = CallRecordContentValidator.validate(call_record)
 
       assert actual_call_record_after_validation["errors"] == nil
       assert actual_call_record_after_validation == expected_end_call_record

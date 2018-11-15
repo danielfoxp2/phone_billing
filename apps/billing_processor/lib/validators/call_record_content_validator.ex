@@ -1,4 +1,4 @@
-defmodule BillingProcessor.CallRecordValidator do
+defmodule BillingProcessor.CallRecordContentValidator do
   alias BillingProcessor.TimestampValidator
   alias BillingProcessor.Error
 
