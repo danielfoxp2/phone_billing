@@ -17,13 +17,21 @@ defmodule BillingProcessor.CallStructureTest do
     end
 
     test "don't add error when a call has a call record without call id value" do
-      call_record = [%{"type" => "start"}]
+      call_record_without_call_id_key = [%{"type" => "start"}]
+      call_record_with_empty_call_id = [%{"call_id" => "", "type" => "start"}]
+      call_record_with_nil_call_id = [%{"call_id" => nil, "type" => "start"}]
 
-      expected_call_record = [%{"type" => "start"}]
+      expected_call_record_without_call_id_key = [%{"type" => "start"}]
+      expected_call_record_with_empty_call_id = [%{"call_id" => "", "type" => "start"}]
+      expected_call_record_with_nil_call_id = [%{"call_id" => nil, "type" => "start"}]
 
-      actual_result = CallStructure.validate_pair_of(call_record)
+      actual_result_call_record_without_call_id_key = CallStructure.validate_pair_of(call_record_without_call_id_key)
+      actual_result_call_record_with_empty_call_id = CallStructure.validate_pair_of(call_record_with_empty_call_id)
+      actual_result_call_record_with_nil_call_id = CallStructure.validate_pair_of(call_record_with_nil_call_id)
 
-      assert actual_result == expected_call_record
+      assert actual_result_call_record_without_call_id_key == expected_call_record_without_call_id_key
+      assert actual_result_call_record_with_empty_call_id == expected_call_record_with_empty_call_id
+      assert actual_result_call_record_with_nil_call_id == expected_call_record_with_nil_call_id
     end
 
   end
