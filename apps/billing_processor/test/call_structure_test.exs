@@ -34,5 +34,26 @@ defmodule BillingProcessor.CallStructureTest do
       assert actual_result_call_record_with_nil_call_id == expected_call_record_with_nil_call_id
     end
 
+    test "add error when a call has a call record without type value" do
+      call_id = 1
+      call_record_without_type_key = [%{"call_id" => call_id}]
+      call_record_with_empty_type = [%{"call_id" => call_id, "type" => ""}]
+      call_record_with_nil_type = [%{"call_id" => call_id, "type" => nil}]
+
+      error_message = "Inconsistent call for call_id '#{call_id}'. A call is a composition of two record types, 'start' and 'end', with the same call id."
+
+      expected_call_record_without_type_key = [%{"call_id" => call_id, "errors" => [error_message]}]
+      expected_call_record_with_empty_type = [%{"call_id" => call_id, "type" => "", "errors" => [error_message]}]
+      expected_call_record_with_nil_type = [%{"call_id" => call_id, "type" => nil, "errors" => [error_message]}]
+
+      actual_result_call_record_without_type_key = CallStructure.validate_pair_of(call_record_without_type_key)
+      actual_result_call_record_with_empty_type = CallStructure.validate_pair_of(call_record_with_empty_type)
+      actual_result_call_record_with_nil_type = CallStructure.validate_pair_of(call_record_with_nil_type)
+
+      assert actual_result_call_record_without_type_key == expected_call_record_without_type_key
+      assert actual_result_call_record_with_empty_type == expected_call_record_with_empty_type
+      assert actual_result_call_record_with_nil_type == expected_call_record_with_nil_type
+    end
+
   end
 end
