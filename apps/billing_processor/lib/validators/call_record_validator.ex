@@ -1,9 +1,13 @@
 defmodule BillingProcessor.CallRecordValidator do
-  alias BillingProcessor.ErrorMessage
   alias BillingProcessor.TimestampValidator
   alias BillingProcessor.Error
 
-  def validate(call_record) do
+  def validate(call_records) do
+    call_records
+    |> Enum.map(fn call_record -> process_validation(call_record) end)
+  end
+
+  defp process_validation(call_record) do
     call_record
     |> validate("id")
     |> validate("type")
