@@ -4,10 +4,12 @@ defmodule BillingProcessor.CallStructure do
   def validate_pair_of(call_records) do
     call_records
     |> Enum.group_by(fn call_record -> call_record["call_id"] end)
-    |> Enum.flat_map(fn {_, call_records} -> process_validation_of(call_records) end)
+    |> Enum.flat_map(&process_validation_of/1)
   end
 
-  defp process_validation_of(call_records) do
+  defp process_validation_of({nil, call_records}), do: call_records
+  defp process_validation_of({"", call_records}), do: call_records
+  defp process_validation_of({_, call_records}) do
     call_records
     |> Enum.count
     |> mount_error_if_needed(call_records)

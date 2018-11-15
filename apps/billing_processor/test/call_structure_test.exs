@@ -16,5 +16,15 @@ defmodule BillingProcessor.CallStructureTest do
       assert actual_result == expected_call_records
     end
 
+    test "don't add error when a call has a call record without call id value" do
+      call_record = [%{"type" => "start"}]
+
+      expected_call_record = [%{"type" => "start"}]
+
+      actual_result = CallStructure.validate_pair_of(call_record)
+
+      assert actual_result == expected_call_record
+    end
+
   end
 end
