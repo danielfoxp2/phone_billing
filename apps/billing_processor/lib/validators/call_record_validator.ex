@@ -8,12 +8,8 @@ defmodule BillingProcessor.CallRecordValidator do
   end
 
   defp process_validation_in_parallel(of_these_call_records) do
-    Enum.map(of_these_call_records, fn call_record -> process_validation(call_record) end)
-  end
-
-  defp process_validation(call_record) do
-    task = Task.async(fn -> process(call_record) end)
-    Task.await(task)
+    Enum.map(of_these_call_records, fn call_record -> Task.async(fn -> process(call_record) end) end)
+    |> Enum.map(&Task.await/1)
   end
 
   defp process(call_record) do

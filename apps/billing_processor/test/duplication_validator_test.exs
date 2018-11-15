@@ -5,7 +5,6 @@ defmodule BillingProcessor.DuplicationValidatorTest do
   describe "call record id duplication checking" do
     test "that its add an error message when there are duplicated call record id within call records to be persisted" do
       duplicated_id = "1"
-      found_duplicated_in_database = [id: "3"]
       call_records = [%{"id" => duplicated_id}, %{"id" => duplicated_id}, %{"id" => "2"}]
 
       error_message = "call record with id: #{duplicated_id} is duplicated in call records being inserted"
@@ -45,7 +44,6 @@ defmodule BillingProcessor.DuplicationValidatorTest do
   describe "call record call_id duplication checking" do
     test "that its add an error message when there are more than two call ids with the same value within call records to be persisted" do
       duplicated_call_id = "1"
-      found_duplicated_in_database = [call_id: "3"]
       call_records = [%{"call_id" => duplicated_call_id}, %{"call_id" => duplicated_call_id}, %{"call_id" => "2"}, %{"call_id" => duplicated_call_id}]
 
       error_message = "call record with call_id: #{duplicated_call_id} is duplicated in call records being inserted"

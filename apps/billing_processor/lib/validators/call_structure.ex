@@ -8,11 +8,9 @@ defmodule BillingProcessor.CallStructure do
   end
 
   defp group_by_call_id(call_records), do: Enum.group_by(call_records, fn call_record -> call_record["call_id"] end)
-  defp execute_validation_pipeline(for_grouped_call_records), do: Enum.flat_map(for_grouped_call_records, &process_parallel_validation_of/1)
-
-  defp process_parallel_validation_of(grouped_call_records) do
-    task = Task.async(fn -> process_validation_of(grouped_call_records) end)
-    Task.await(task)
+  defp execute_validation_pipeline(for_calls) do
+    Enum.map(for_calls, fn grouped_call_records -> Task.async(fn -> process_validation_of(grouped_call_records) end) end)
+    |> Enum.flat_map(&Task.await/1)
   end
 
   defp process_validation_of({nil, call_records}), do: call_records
