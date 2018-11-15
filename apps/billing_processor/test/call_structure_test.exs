@@ -55,5 +55,15 @@ defmodule BillingProcessor.CallStructureTest do
       assert actual_result_call_record_with_nil_type == expected_call_record_with_nil_type
     end
 
+    test "don't add error when a call has a valid structure" do
+      call_records_of_call = [%{"call_id" => 1, "type" => "start"}, %{"call_id" => 1, "type" => "end"}]
+
+      expected_call_records_of_call = [%{"call_id" => 1, "type" => "start"}, %{"call_id" => 1, "type" => "end"}]
+
+      actual_result_call_records_of_call = CallStructure.validate_pair_of(call_records_of_call)
+
+      assert actual_result_call_records_of_call == expected_call_records_of_call
+    end
+
   end
 end
