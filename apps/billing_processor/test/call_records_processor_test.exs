@@ -17,21 +17,24 @@ defmodule BillingProcessor.CallRecordsProcessorTest do
 
   describe "call records processing" do
     test "should present the quantity of received records" do
-      call_records = [create_start_call_detail_record(), create_end_call_detail_record()]
+      call_records_inserted = []
+      call_records = {call_records_inserted, [create_start_call_detail_record(), create_end_call_detail_record()]}
       %{received_records: received_records} = CallRecordsProcessor.execute(call_records)
 
       assert received_records == 2
     end
 
     test "should present the quantity of consistent records as success" do
-      call_records = [create_start_call_detail_record(), create_end_call_detail_record()]
+      call_records_inserted = [{:ok, %{}}, {:ok, %{}}]
+      call_records = {call_records_inserted, [create_start_call_detail_record(), create_end_call_detail_record()]}
       %{consistent_records: consistent_records} = CallRecordsProcessor.execute(call_records)
 
       assert consistent_records == 2
     end
 
     test "should present the quantity of inconsistent records as errors" do
-      call_records = [create_start_call_detail_inconsistent_record(), create_end_call_detail_record()]
+      call_records_inserted = []
+      call_records = {call_records_inserted, [create_start_call_detail_inconsistent_record(), create_end_call_detail_inconsistent_record()]}
       %{inconsistent_records: inconsistent_records} = CallRecordsProcessor.execute(call_records)
 
       assert inconsistent_records == 2
@@ -43,29 +46,40 @@ defmodule BillingProcessor.CallRecordsProcessorTest do
       "id" => 1,
       "type" => "start",
       "timestamp" => "",
-      "call_id" => 123,
-      "source" => 62984680648,
-      "destination" => 62111222333
+      "call_id" => "123",
+      "source" => "62984680648",
+      "destination" => "62111222333"
     }
   end
 
   defp create_end_call_detail_record() do
     %{
-      "id" => 2,
+      "id" => "2",
       "type" => "end",
       "timestamp" => "",
-      "call_id" => 123
+      "call_id" => "123"
     }
   end
 
   defp create_start_call_detail_inconsistent_record() do
     %{
-      "id" => 1,
+      "id" => "1",
       "type" => "start",
       "timestamp" => "",
-      "call_id" => 123,
+      "call_id" => "123",
       "source" => "",
-      "destination" => 62111222333
+      "destination" => "62111222333",
+      "errors" => []
+    }
+  end
+
+  defp create_end_call_detail_inconsistent_record() do
+    %{
+      "id" => "2",
+      "type" => "end",
+      "timestamp" => "",
+      "call_id" => "123",
+      "errors" => []
     }
   end
 
