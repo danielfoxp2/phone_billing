@@ -19,42 +19,42 @@ defmodule BillingProcessor.CallRecordsProcessorTest do
     test "should present the quantity of received records" do
       call_records_inserted = []
       call_records = {call_records_inserted, [create_start_call_detail_record(), create_end_call_detail_record()]}
-      %{received_records: received_records} = CallRecordsProcessor.execute(call_records)
+      %{received_records_quantity: received_records_quantity} = CallRecordsProcessor.execute(call_records)
 
-      assert received_records == 2
+      assert received_records_quantity == 2
     end
 
     test "should present the quantity of consistent records as success" do
       call_records_inserted = [{:ok, %{}}, {:ok, %{}}, {:error, %{}}]
       call_records = {call_records_inserted, [create_start_call_detail_record(), create_end_call_detail_record()]}
-      %{consistent_records: consistent_records} = CallRecordsProcessor.execute(call_records)
+      %{consistent_records_quantity: consistent_records_quantity} = CallRecordsProcessor.execute(call_records)
 
-      assert consistent_records == 2
+      assert consistent_records_quantity == 2
     end
 
     test "should present the quantity of inconsistent records as validation errors" do
       call_records_inserted = []
       call_records = {call_records_inserted, [create_start_call_detail_inconsistent_record(), create_end_call_detail_inconsistent_record()]}
-      %{inconsistent_records: inconsistent_records} = CallRecordsProcessor.execute(call_records)
+      %{inconsistent_records_quantity: inconsistent_records_quantity} = CallRecordsProcessor.execute(call_records)
 
-      assert inconsistent_records == 2
+      assert inconsistent_records_quantity == 2
     end
 
     test "should present the quantity of database inconsistent records as database errors" do
       call_records_inserted_with_errors = [{:error, %{}}, {:error, %{}}, {:ok, %{}}]
       call_records = {call_records_inserted_with_errors, [create_start_call_detail_record(), create_end_call_detail_record()]}
-      %{database_inconsistent_records: database_inconsistent_records} = CallRecordsProcessor.execute(call_records)
+      %{database_inconsistent_records_quantity: database_inconsistent_records_quantity} = CallRecordsProcessor.execute(call_records)
 
-      assert database_inconsistent_records == 2
+      assert database_inconsistent_records_quantity == 2
     end
 
     test "should present the call records with validation errors" do
       call_records_inserted = []
       call_records = {call_records_inserted, [create_start_call_detail_record(), create_end_call_detail_inconsistent_record()]}
       expected_result = [create_end_call_detail_inconsistent_record()]
-      %{inconsistent_validation_records: inconsistent_validation_records} = CallRecordsProcessor.execute(call_records)
+      %{failed_records_on_validation: failed_records_on_validation} = CallRecordsProcessor.execute(call_records)
 
-      assert inconsistent_validation_records == expected_result
+      assert failed_records_on_validation == expected_result
     end
 
     test "should present the call records with insertion database errors" do

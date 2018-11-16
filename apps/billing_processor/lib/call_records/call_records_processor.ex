@@ -7,11 +7,11 @@ defmodule BillingProcessor.CallRecordsProcessor do
   
   def execute({call_records_inserted, all_call_records}) do
     %{
-      received_records: Enum.count(all_call_records),
-      consistent_records: Enum.count(call_records_inserted, fn {status, _call_record} -> status == :ok end),
-      inconsistent_records: Enum.count(all_call_records, fn call_record -> call_record["errors"] != nil end),
-      database_inconsistent_records: Enum.count(call_records_inserted, fn {status, _call_record} -> status == :error end),
-      inconsistent_validation_records: Enum.filter(all_call_records, fn call_record ->  call_record["errors"] != nil end),
+      received_records_quantity: Enum.count(all_call_records),
+      consistent_records_quantity: Enum.count(call_records_inserted, fn {status, _call_record} -> status == :ok end),
+      inconsistent_records_quantity: Enum.count(all_call_records, fn call_record -> call_record["errors"] != nil end),
+      database_inconsistent_records_quantity: Enum.count(call_records_inserted, fn {status, _call_record} -> status == :error end),
+      failed_records_on_validation: Enum.filter(all_call_records, fn call_record ->  call_record["errors"] != nil end),
       failed_records_on_insert: Enum.filter(call_records_inserted, fn {status, _call_record} -> status == :error end)
     }
   end
