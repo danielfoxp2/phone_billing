@@ -3,13 +3,18 @@ defmodule BillingRepository.CallRecordRepository do
   alias BillingRepository.Repo
   alias Ecto.Multi
 
-  def insert_only_valid(grouped_calls) do
+  def insert_only_valid({grouped_calls, call_records}) do
+    insertion_result = insert_in_parallel(grouped_calls)
+    {insertion_result, call_records}
+  end
+
+  defp insert_in_parallel(grouped_calls) do
     grouped_calls
     |> Enum.map(fn {_not_used, call} -> Task.async(fn -> insert_data_of(call) end) end)
     |> Enum.map(&Task.await/1)
   end
 
-  def insert_data_of(call) do
+  defp insert_data_of(call) do
     [first_call_record | [second_call_record]] = call
 
     Multi.new()
@@ -18,7 +23,7 @@ defmodule BillingRepository.CallRecordRepository do
     |> Repo.transaction()
   end
 
-  def insert(call_record) do
+  defp insert(call_record) do
     %CallRecord{}
     |> CallRecord.changeset(call_record) 
     |> Repo.insert()
