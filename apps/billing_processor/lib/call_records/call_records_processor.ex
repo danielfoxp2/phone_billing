@@ -28,30 +28,31 @@ defmodule BillingProcessor.CallRecordsProcessor do
 
 
   def execute({call_records_inserted, all_call_records}) do
-    map_a = first_step(all_call_records)
-    map_b = second_step(call_records_inserted)
-    Map.merge(map_a, map_b)
+    first_step(all_call_records)
+    |> Map.merge(second_step(call_records_inserted))
   end
 
   defp first_step(call_records) do
     Enum.reduce(call_records, %{}, fn (call_record, acumulator) -> 
-      acumulator = increment(acumulator, :received_records_quantity, :return_one)
-      acumulator = increment(acumulator, :inconsistent_records_quantity, call_record)
-      aggregate(acumulator, :failed_records_on_validation, call_record)
+      acumulator
+      |> increment(:received_records_quantity, :return_one)
+      |> increment(:inconsistent_records_quantity, call_record)
+      |> aggregate(:failed_records_on_validation, call_record)
     end)
   end
 
   defp second_step(call_records_inserted) do
     Enum.reduce(call_records_inserted, %{}, fn (call_record, acumulator) -> 
-      acumulator = increment(acumulator, :consistent_records_quantity, {call_record, :co})
-      acumulator = increment(acumulator, :database_inconsistent_records_quantity, call_record)
-      aggregate(acumulator, :failed_records_on_insert, call_record)
+      acumulator
+      |> increment(:consistent_records_quantity, {call_record, :co})
+      |> increment(:database_inconsistent_records_quantity, call_record)
+      |> aggregate(:failed_records_on_insert, call_record)
     end)
   end
 
   defp increment(acumulator, field, call_record_or_type_of_return) do
     partial_quantity =  Map.get(acumulator, field, 0) + bla(call_record_or_type_of_return)
-    acumulator = Map.put(acumulator, field, partial_quantity)
+    Map.put(acumulator, field, partial_quantity)
   end
 
   defp aggregate(acumulator, field, call_record) do
