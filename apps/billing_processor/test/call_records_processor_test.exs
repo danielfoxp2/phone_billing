@@ -4,9 +4,9 @@ defmodule BillingProcessor.CallRecordsProcessorTest do
 
   describe "call records processor filtering" do
     test "should return only call records without errors" do
-      call_records_with_some_errors = [%{"id" => 1, "errors" => "error_message"}, %{"id" => 2, "errors" => "error_message"}, %{"id" => 3}]
+      call_records_with_some_errors = mount_call_records_with_some_errors()
       
-      expected_call_records = [%{"id" => 3}]
+      expected_call_records = %{"1" => [%{"id" => "3", "call_id" => "1", "type" => "start"}, %{"id" => "4", "call_id" => "1", "type" => "end"}]}
 
       call_record_without_errors = CallRecordsProcessor.get_only_valid(call_records_with_some_errors)
 
@@ -67,11 +67,21 @@ defmodule BillingProcessor.CallRecordsProcessorTest do
       "destination" => 62111222333
     }
   end
+
+  defp mount_call_records_with_some_errors() do
+    [
+      %{"id" => "1", "errors" => "error_message"}, 
+      %{"id" => "2", "errors" => "error_message"}, 
+      %{"id" => "3", "call_id" => "1", "type" => "start"}, 
+      %{"id" => "4", "call_id" => "1", "type" => "end"}
+    ]
+  end
 end
 
 # Recebidos :0 --numero de registros
 # Sucesso :0 --quantidade de registros salvos
-# Erros :0 --quantidade de registros recusados (inconsistentes)
+# Erros de validação :0 --quantidade de registros recusados (inconsistentes)
+# Erros ao inserir no banco: 0 (transacionar insert no banco pelo par de registros[call_id])
 # inconsistent_records: [%{
 #       "id" => 1,
 #       "type" => "start",
@@ -82,3 +92,4 @@ end
 #       "errors" => ["asdf", "novo erro"]
 #     }
 #]
+#
