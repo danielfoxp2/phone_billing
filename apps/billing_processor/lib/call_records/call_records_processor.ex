@@ -28,36 +28,39 @@ defmodule BillingProcessor.CallRecordsProcessor do
 
 
   def execute({call_records_inserted, all_call_records}) do
-    map_a = all_call_records
-    |> Enum.reduce(%{}, fn (call_record, acumulator) -> 
-      partial_quantity =  Map.get(acumulator, :received_records_quantity, 0) + 1
-      acumulator = Map.put(acumulator, :received_records_quantity, partial_quantity)
-
-      partial_quantity = Map.get(acumulator, :inconsistent_records_quantity, 0) + bla(call_record)
-      acumulator = Map.put(acumulator, :inconsistent_records_quantity, partial_quantity)
-
-      records_with_error = Map.get(acumulator, :failed_records_on_validation, []) ++ blabla(call_record)
-      Map.put(acumulator, :failed_records_on_validation, records_with_error)
-    end)
-
-    map_b = call_records_inserted
-    |> Enum.reduce(%{}, fn (call_record, acumulator) -> 
-      partial_quantity = Map.get(acumulator, :consistent_records_quantity, 0) + blaah(call_record)
-      acumulator = Map.put(acumulator, :consistent_records_quantity, partial_quantity)
-
-      partial_quantity = Map.get(acumulator, :database_inconsistent_records_quantity, 0) + bla(call_record)
-      acumulator = Map.put(acumulator, :database_inconsistent_records_quantity, partial_quantity)
-
-      records_with_error_on_database = Map.get(acumulator, :failed_records_on_insert, []) ++ blabla(call_record)
-      Map.put(acumulator, :failed_records_on_insert, records_with_error_on_database)
-    end)
-    
+    map_a = first_step(all_call_records)
+    map_b = second_step(call_records_inserted)
     Map.merge(map_a, map_b)
   end
 
-  defp blaah({:ok, _not_used}), do: 1
-  defp blaah(_is_inconsistent), do: 0
+  defp first_step(call_records) do
+    Enum.reduce(call_records, %{}, fn (call_record, acumulator) -> 
+      acumulator = increment(acumulator, :received_records_quantity, :return_one)
+      acumulator = increment(acumulator, :inconsistent_records_quantity, call_record)
+      aggregate(acumulator, :failed_records_on_validation, call_record)
+    end)
+  end
 
+  defp second_step(call_records_inserted) do
+    Enum.reduce(call_records_inserted, %{}, fn (call_record, acumulator) -> 
+      acumulator = increment(acumulator, :consistent_records_quantity, {call_record, :co})
+      acumulator = increment(acumulator, :database_inconsistent_records_quantity, call_record)
+      aggregate(acumulator, :failed_records_on_insert, call_record)
+    end)
+  end
+
+  defp increment(acumulator, field, call_record_or_type_of_return) do
+    partial_quantity =  Map.get(acumulator, field, 0) + bla(call_record_or_type_of_return)
+    acumulator = Map.put(acumulator, field, partial_quantity)
+  end
+
+  defp aggregate(acumulator, field, call_record) do
+    records_with_error_on_database = Map.get(acumulator, field, []) ++ blabla(call_record)
+    Map.put(acumulator, field, records_with_error_on_database)
+  end
+
+  defp bla({{:ok, _not_used}, :co}), do: 1
+  defp bla(:return_one), do: 1
   defp bla({:error, _not_used}), do: 1
   defp bla(%{"errors" => errors}), do: 1
   defp bla(_call_record_without_errors), do: 0
