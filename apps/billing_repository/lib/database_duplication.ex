@@ -3,6 +3,11 @@ defmodule BillingRepository.DatabaseDuplication do
   use Task
 
   def search_for(call_records) do
+    duplicated_call_records_found = search_in_parallel_for_duplicated(call_records)
+    {duplicated_call_records_found, call_records}
+  end
+
+  defp search_in_parallel_for_duplicated(call_records) do
     call_records
     |> Enum.map(fn call_record -> Task.async(fn -> get_duplicated(call_record) end) end)
     |> Enum.flat_map(&Task.await/1)
@@ -11,6 +16,7 @@ defmodule BillingRepository.DatabaseDuplication do
   defp get_duplicated(%{"id" => id, "call_id" => call_id}) do
     Ecto.Adapters.SQL.query!(Repo, get_duplicated_query(id, call_id))
     |> mount_result
+
   end
   defp get_duplicated(%{"id" => id}) do
     get_duplicated(%{"id" => id, "call_id" => 0})
