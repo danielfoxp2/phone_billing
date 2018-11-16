@@ -28,7 +28,7 @@ defmodule BillingProcessor.CallRecordsProcessor do
 
 
   def execute({call_records_inserted, all_call_records}) do
-    acumulador_de_fora = all_call_records
+    map_a = all_call_records
     |> Enum.reduce(%{}, fn (call_record, acumulator) -> 
       partial_quantity =  Map.get(acumulator, :received_records_quantity, 0) + 1
       acumulator = Map.put(acumulator, :received_records_quantity, partial_quantity)
@@ -40,8 +40,8 @@ defmodule BillingProcessor.CallRecordsProcessor do
       Map.put(acumulator, :failed_records_on_validation, records_with_error)
     end)
 
-    call_records_inserted
-    |> Enum.reduce(acumulador_de_fora, fn (call_record, acumulator) -> 
+    map_b = call_records_inserted
+    |> Enum.reduce(%{}, fn (call_record, acumulator) -> 
       partial_quantity = Map.get(acumulator, :consistent_records_quantity, 0) + blaah(call_record)
       acumulator = Map.put(acumulator, :consistent_records_quantity, partial_quantity)
 
@@ -51,7 +51,8 @@ defmodule BillingProcessor.CallRecordsProcessor do
       records_with_error_on_database = Map.get(acumulator, :failed_records_on_insert, []) ++ blabla(call_record)
       Map.put(acumulator, :failed_records_on_insert, records_with_error_on_database)
     end)
-    |> IO.inspect
+    
+    Map.merge(map_a, map_b)
   end
 
   defp blaah({:ok, _not_used}), do: 1
