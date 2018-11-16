@@ -7,7 +7,7 @@ defmodule BillingProcessor.DuplicationValidator do
     |> add_errors_for_duplicated("call_id")
   end
 
-  def add_errors_for(call_records_being_inserted, found_duplicated_in_database) do   
+  def add_errors_for_duplicated_in_database(found_duplicated_in_database, call_records_being_inserted) do   
     call_records_being_inserted
     |> add_errors_for_duplicated("id", found_duplicated_in_database)
     |> add_errors_for_duplicated("call_id", found_duplicated_in_database)
