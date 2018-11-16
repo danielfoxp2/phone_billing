@@ -22,7 +22,7 @@ defmodule BillingProcessor.DuplicationValidatorTest do
       error_message = "call record with id: #{duplicated_id} already exists in database"
 
       expected_call_records = [%{"id" => duplicated_id, "errors" => [error_message]}, %{"id" => "2"}]
-      actual_result = DuplicationValidator.add_errors_for_duplicated_in_database(found_duplicated_in_database, call_records)
+      actual_result = DuplicationValidator.add_errors_for_duplicated_in_database({found_duplicated_in_database, call_records})
 
       assert actual_result == expected_call_records
     end
@@ -34,7 +34,7 @@ defmodule BillingProcessor.DuplicationValidatorTest do
       expected_call_records = [%{"id" => ""}, %{"call_id" => "2"}, %{"id" => nil}]
 
       actual_result_for_duplication_in_call_records_being_inserted = DuplicationValidator.add_errors_for_duplicated(call_records)
-      actual_result_for_duplication_in_persisted_call_records = DuplicationValidator.add_errors_for_duplicated_in_database(found_duplicated_in_database, call_records)
+      actual_result_for_duplication_in_persisted_call_records = DuplicationValidator.add_errors_for_duplicated_in_database({found_duplicated_in_database, call_records})
 
       assert actual_result_for_duplication_in_call_records_being_inserted == expected_call_records
       assert actual_result_for_duplication_in_persisted_call_records == expected_call_records
@@ -61,7 +61,7 @@ defmodule BillingProcessor.DuplicationValidatorTest do
       error_message = "call record with call_id: #{duplicated_call_id} already exists in database"
 
       expected_call_records = [%{"call_id" => duplicated_call_id, "errors" => [error_message]}, %{"call_id" => duplicated_call_id, "errors" => [error_message]}, %{"call_id" => 2}]
-      actual_result = DuplicationValidator.add_errors_for_duplicated_in_database(found_duplicated_in_database, call_records)
+      actual_result = DuplicationValidator.add_errors_for_duplicated_in_database({found_duplicated_in_database, call_records})
 
       assert actual_result == expected_call_records
     end
@@ -73,7 +73,7 @@ defmodule BillingProcessor.DuplicationValidatorTest do
       expected_call_records = [%{"call_id" => ""}, %{"id" => "2"}, %{"call_id" => nil}]
 
       actual_result_for_duplication_in_call_records_being_inserted = DuplicationValidator.add_errors_for_duplicated(call_records)
-      actual_result_for_duplication_in_persisted_call_records = DuplicationValidator.add_errors_for_duplicated_in_database(found_duplicated_in_database, call_records)
+      actual_result_for_duplication_in_persisted_call_records = DuplicationValidator.add_errors_for_duplicated_in_database({found_duplicated_in_database, call_records})
 
       assert actual_result_for_duplication_in_call_records_being_inserted == expected_call_records
       assert actual_result_for_duplication_in_persisted_call_records == expected_call_records
