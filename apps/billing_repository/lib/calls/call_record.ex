@@ -18,6 +18,6 @@ defmodule BillingRepository.Calls.CallRecord do
   def changeset(call_record, attrs) do
     call_record
     |> cast(attrs, [:id, :type, :timestamp, :call_id, :source, :destination])
-    |> validate_required([:id, :type, :timestamp, :call_id, :source, :destination])
+    |> validate_required([:id, :type, :timestamp, :call_id])
   end
 end
