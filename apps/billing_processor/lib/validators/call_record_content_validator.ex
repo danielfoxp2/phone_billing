@@ -54,7 +54,7 @@ defmodule BillingProcessor.CallRecordContentValidator do
   end
 
   defp validate_number_in(in_call_record, field, value, regex) do
-    when_it_is_invalid = Regex.match?(regex, value) == false
+    when_it_is_invalid = Regex.match?(regex, "#{value}") == false
     Error.build(in_call_record, field, when_it_is_invalid)
   end
 
