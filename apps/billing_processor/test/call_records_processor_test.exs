@@ -58,9 +58,9 @@ defmodule BillingProcessor.CallRecordsProcessorTest do
     end
 
     test "should present the call records with insertion database errors" do
-      call_records_inserted_with_errors = [{:error, %{}}, {:error, %{}}, {:ok, %{}}]
+      call_records_inserted_with_errors = [{:error, %{"id" => "1"}}, {:error, %{"id" => "2"}}, {:ok, %{}}]
       call_records = {call_records_inserted_with_errors, [create_start_call_detail_record(), create_end_call_detail_record()]}
-      expected_result = [{:error, %{}}, {:error, %{}}]
+      expected_result = [%{"id" => "1"}, %{"id" => "2"}]
       %{failed_records_on_insert: failed_records_on_insert} = CallRecordsProcessor.execute(call_records)
 
       assert failed_records_on_insert == expected_result
@@ -118,19 +118,3 @@ defmodule BillingProcessor.CallRecordsProcessorTest do
     ]
   end
 end
-
-# Recebidos :0 --numero de registros
-# Sucesso :0 --quantidade de registros salvos
-# Erros de validação :0 --quantidade de registros recusados (inconsistentes)
-# Erros ao inserir no banco: 0 (transacionar insert no banco pelo par de registros[call_id])
-# inconsistent_records: [%{
-#       "id" => 1,
-#       "type" => "start",
-#       "timestamp" => "",
-#       "call_id" => 123,
-#       "source" => 62984680648,
-#       "destination" => 62111222333,
-#       "errors" => ["asdf", "novo erro"]
-#     }
-#]
-#
