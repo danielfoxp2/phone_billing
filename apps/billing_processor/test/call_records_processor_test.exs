@@ -6,11 +6,12 @@ defmodule BillingProcessor.CallRecordsProcessorTest do
     test "should return only call records without errors" do
       call_records_with_some_errors = mount_call_records_with_some_errors()
       
-      expected_call_records = %{"1" => [%{"id" => "3", "call_id" => "1", "type" => "start"}, %{"id" => "4", "call_id" => "1", "type" => "end"}]}
+      expected_grouped_calls = %{"1" => [%{"id" => "3", "call_id" => "1", "type" => "start"}, %{"id" => "4", "call_id" => "1", "type" => "end"}]}
+      expected_call_records = {expected_grouped_calls, call_records_with_some_errors}
 
-      call_record_without_errors = CallRecordsProcessor.get_only_valid(call_records_with_some_errors)
+      actual_call_record_without_errors = CallRecordsProcessor.get_only_valid(call_records_with_some_errors)
 
-      assert expected_call_records == call_record_without_errors
+      assert actual_call_record_without_errors == expected_call_records
     end
   end
 
