@@ -11,8 +11,19 @@ defmodule BillingProcessor.CallRecordsProcessor do
   end
 
   def mount_processing_result({call_records_inserted, all_call_records}) do
-    mount_response_of_processing_validation_of(all_call_records)
-    |> Map.merge(mount_response_of_database_insertion_of(call_records_inserted))
+    response_of_processing_validation = mount_parallel_response_of_processing_validation_of(all_call_records)
+    response_of_database_insertion = mount_parallel_response_of_database_insertion_of(call_records_inserted)
+
+    Task.await(response_of_processing_validation)
+    |> Map.merge(Task.await(response_of_database_insertion))
+  end
+
+  defp mount_parallel_response_of_processing_validation_of(all_call_records) do
+    Task.async(fn -> mount_response_of_processing_validation_of(all_call_records) end)
+  end
+
+  defp mount_parallel_response_of_database_insertion_of(call_records_inserted) do
+    Task.async(fn -> mount_response_of_database_insertion_of(call_records_inserted) end)
   end
 
   defp mount_response_of_processing_validation_of(call_records) do
