@@ -66,4 +66,27 @@ defmodule BillingProcessor.CallStructureTest do
     end
 
   end
+
+  describe "call records processor filtering" do
+    test "should return only call records without errors" do
+      call_records_with_some_errors = mount_call_records_with_some_errors()
+      
+      expected_grouped_calls = %{"1" => [%{"id" => "3", "call_id" => "1", "type" => "start"}, %{"id" => "4", "call_id" => "1", "type" => "end"}]}
+      expected_call_records = {expected_grouped_calls, call_records_with_some_errors}
+
+      actual_call_record_without_errors = CallStructure.get_only_valid(call_records_with_some_errors)
+
+      assert actual_call_record_without_errors == expected_call_records
+    end
+
+    defp mount_call_records_with_some_errors() do
+    [
+      %{"id" => "1", "errors" => "error_message"}, 
+      %{"id" => "2", "errors" => "error_message"}, 
+      %{"id" => "3", "call_id" => "1", "type" => "start"}, 
+      %{"id" => "4", "call_id" => "1", "type" => "end"}
+    ]
+    end
+
+  end
 end

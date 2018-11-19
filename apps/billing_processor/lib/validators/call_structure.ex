@@ -7,6 +7,16 @@ defmodule BillingProcessor.CallStructure do
     |> execute_validation_pipeline()
   end
 
+  def get_only_valid(call_records) do
+    grouped_valid_call = group_only_valid(call_records)
+    {grouped_valid_call, call_records}
+  end
+
+  defp group_only_valid(call_records) do
+    Enum.filter(call_records, fn call_record -> call_record["errors"] == nil end)
+    |> Enum.group_by(fn call_record -> call_record["call_id"] end)
+  end
+
   defp group_by_call_id(call_records), do: Enum.group_by(call_records, fn call_record -> call_record["call_id"] end)
   defp execute_validation_pipeline(for_calls) do
     Enum.map(for_calls, fn grouped_call_records -> Task.async(fn -> process_validation_of(grouped_call_records) end) end)
