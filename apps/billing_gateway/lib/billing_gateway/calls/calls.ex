@@ -12,7 +12,7 @@ defmodule BillingGateway.Calls do
   alias BillingProcessor.CallRecordContentValidator
   alias BillingProcessor.DuplicationValidator
   alias BillingProcessor.CallStructure
-  alias BillingProcessor.CallRecordsProcessor
+  alias BillingProcessor.ResponseBuilder
 
   @doc """
   Returns the list of call_records.
@@ -79,9 +79,9 @@ defmodule BillingGateway.Calls do
     |> DatabaseDuplication.search_for()
     |> DuplicationValidator.add_errors_for_duplicated_in_database()
     |> CallStructure.validate_pair_of()
-    |> CallRecordsProcessor.get_only_valid()
+    |> CallStructure.get_only_valid()
     |> CallRecordRepository.insert_only_valid()
-    |> CallRecordsProcessor.mount_processing_result()
+    |> ResponseBuilder.mount_processing_result()
   end
   
   defp get_protocol_number(), do: Protocol.new_number

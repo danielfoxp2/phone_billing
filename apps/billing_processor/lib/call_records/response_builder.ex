@@ -1,14 +1,4 @@
-defmodule BillingProcessor.CallRecordsProcessor do
-
-  def get_only_valid(call_records) do
-    grouped_valid_call = group_only_valid(call_records)
-    {grouped_valid_call, call_records}
-  end
-
-  defp group_only_valid(call_records) do
-    Enum.filter(call_records, fn call_record -> call_record["errors"] == nil end)
-    |> Enum.group_by(fn call_record -> call_record["call_id"] end)
-  end
+defmodule BillingProcessor.ResponseBuilder do
 
   def mount_processing_result({call_records_inserted, all_call_records}) do
     response_of_processing_validation = mount_parallel_response_of_processing_validation_of(all_call_records)
