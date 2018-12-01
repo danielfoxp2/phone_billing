@@ -6,6 +6,8 @@ config :billing_gateway, BillingGatewayWeb.Endpoint,
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   http: [port: {:system, "PORT"}],
   cache_static_manifest: "priv/static/cache_manifest.json",
-  secrete_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
+  secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
 
 config :logger, level: :info
+
+config :billing_gateway, :http_client, BillingGateway.HttpClient
