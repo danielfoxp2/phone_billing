@@ -7,6 +7,10 @@ defmodule BillingGatewayWeb.ErrorView do
     %{postback_url_error: error_message}
   end
 
+  def render("200.json", %{missing_bill_phone_number_message: error_message}) do
+    %{missing_bill_phone_number: error_message}
+  end
+
   # By default, Phoenix returns the status message from
   # the template name. For example, "404.json" becomes
   # "Not Found".
