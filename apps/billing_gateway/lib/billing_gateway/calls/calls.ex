@@ -13,6 +13,7 @@ defmodule BillingGateway.Calls do
   alias BillingProcessor.DuplicationValidator
   alias BillingProcessor.CallStructure
   alias BillingProcessor.ResponseBuilder
+  alias BillingGateway.SendResponse
 
   @doc """
   Returns the list of call_records.
@@ -65,14 +66,12 @@ defmodule BillingGateway.Calls do
   defp get_postback_url_from(_call_records_params), do: nil
 
   defp process_call_records({:postback_url_error, _} = processing_cant_proceed, _call_records_params), do: processing_cant_proceed
-  defp process_call_records({:ok, _}, call_records_params) do
-    Task.start(fn -> process(call_records_params) end)
+  defp process_call_records({:ok, postback_url}, call_records_params) do
+    Task.start(fn -> process(call_records_params, postback_url) end)
     {:ok, get_protocol_number()}
   end
 
-  defp process(%{"call_records" => call_records} = call_records_params) do
-    IO.puts " rodou process validate"
-
+  defp process(%{"call_records" => call_records} = call_records_params, postback_url) do
     call_records
     |> CallRecordContentValidator.validate()
     |> DuplicationValidator.add_errors_for_duplicated()
@@ -82,6 +81,7 @@ defmodule BillingGateway.Calls do
     |> CallStructure.get_only_valid()
     |> CallRecordRepository.insert_only_valid()
     |> ResponseBuilder.mount_processing_result()
+    |> SendResponse.to(postback_url)
   end
   
   defp get_protocol_number(), do: Protocol.new_number
