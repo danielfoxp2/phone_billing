@@ -1,6 +1,6 @@
 defmodule BillingProcessor.BillPhoneNumberValidator do
   
-  @error_message "The bill calculation was not executed because phone number was not informed"
+  @error_message "The bill calculation was not executed because phone number is invalid or not informed"
 
   def validate(%{"phone_number" => nil} = bill_params), do: mount_error_in(bill_params)
   def validate(%{"phone_number" => ""} = bill_params), do: mount_error_in(bill_params)
@@ -9,13 +9,16 @@ defmodule BillingProcessor.BillPhoneNumberValidator do
 
   defp validate_allowed_range_of(phone_number, bill_params) do
     only_integer_with_ten_or_eleven_digits_regex = ~r/^\d{10,11}+$/
-    variavel = Regex.match?(only_integer_with_ten_or_eleven_digits_regex, "#{phone_number}") == false
     
-    is_in_the_allowed_range?(variavel, bill_params)
+    phone_number
+    |> has_match?(only_integer_with_ten_or_eleven_digits_regex)
+    |> mount_error_if_doesnt_match(bill_params)
   end
 
-  defp is_in_the_allowed_range?(false, bill_params), do: bill_params
-  defp is_in_the_allowed_range?(true, bill_params), do: mount_error_in(bill_params)
+  defp has_match?(phone_number, with_allowed_range_regex), do: Regex.match?(with_allowed_range_regex, "#{phone_number}")
+
+  defp mount_error_if_doesnt_match(true, bill_params), do: bill_params
+  defp mount_error_if_doesnt_match(false, bill_params), do: mount_error_in(bill_params)
 
   defp mount_error_in(bill_params) do
     errors = Map.get(bill_params, "errors", [])

@@ -9,7 +9,7 @@ defmodule BillingProcessor.BillPhoneNumberValidatorTest do
       params_with_empty_phone_number = %{"phone_number" => ""}
       params_with_invalid_phone_number = %{"phone_number" => "2342x"}
 
-      error_message = "The bill calculation was not executed because phone number was not informed"
+      error_message = "The bill calculation was not executed because phone number is invalid or not informed"
       expected_result_for_inexistent_key = %{"errors" => [error_message]}
       expected_result_for_nil_number = %{"phone_number" => nil, "errors" => [error_message]}
       expected_result_for_empty_number = %{"phone_number" => "", "errors" => [error_message]}
@@ -21,16 +21,16 @@ defmodule BillingProcessor.BillPhoneNumberValidatorTest do
       assert BillPhoneNumberValidator.validate(params_with_invalid_phone_number) == expected_result_for_invalid_number
     end
 
-    # test "should validate when phone number has AAXXXXXXXX or AAXXXXXXXXX format" do
-    #   params_with_phone_number_with_ten_digits = %{"phone_number" => "6234568956"}
-    #   params_phone_number_with_eleven_digits = %{"phone_number" => "62984680648"}
+    test "should validate when phone number has AAXXXXXXXX or AAXXXXXXXXX format" do
+      params_with_phone_number_with_ten_digits = %{"phone_number" => "6234568956"}
+      params_phone_number_with_eleven_digits = %{"phone_number" => "62984680648"}
 
-    #   expected_result_number_with_ten_digits = %{"phone_number" => "6234568956"}
-    #   expected_result_number_eleven_digits = %{"phone_number" => "62984680648"}
+      expected_result_number_with_ten_digits = %{"phone_number" => "6234568956"}
+      expected_result_number_eleven_digits = %{"phone_number" => "62984680648"}
 
-    #   assert BillPhoneNumberValidator.validate(params_with_phone_number_with_ten_digits) == expected_result_number_with_ten_digits
-    #   assert BillPhoneNumberValidator.validate(params_phone_number_with_eleven_digits) == expected_result_number_eleven_digits
-    # end
+      assert BillPhoneNumberValidator.validate(params_with_phone_number_with_ten_digits) == expected_result_number_with_ten_digits
+      assert BillPhoneNumberValidator.validate(params_phone_number_with_eleven_digits) == expected_result_number_eleven_digits
+    end
     
   end
 end
