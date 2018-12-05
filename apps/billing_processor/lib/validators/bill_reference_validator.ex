@@ -1,12 +1,32 @@
 defmodule BillingProcessor.BillReferenceValidator do
   
-  @error_message "The bill calculation was not executed because reference has not the valid format of MM/AAAA"
+  @error_message "The bill calculation was not executed because reference has not the valid format of MM/AAAA or has invalid month"
 
   def validate(%{"reference" => reference} = bill_params) do
-    mm_aaaa_format_regex = ~r/^\d{2}\/\d{4}+$/
-
-    Regex.match?(mm_aaaa_format_regex, reference)
+    reference
+    |> valid_format?()
+    |> valid_month?()
     |> mount_error_if_needed(bill_params)
+  end
+
+  defp valid_format?(reference) do
+    mm_aaaa_format_regex = ~r/^\d{2}\/\d{4}+$/
+    is_valid = Regex.match?(mm_aaaa_format_regex, reference)
+
+    {is_valid, reference}
+  end
+
+  defp valid_month?({false, reference}), do: false
+  defp valid_month?({true, reference}) do
+    {month, _} = get_month_from(reference)
+    
+    month >= 1 && month <= 12 
+  end
+
+  defp get_month_from(reference) do
+    String.split(reference, "/") 
+    |> List.first
+    |> Integer.parse
   end
 
   defp mount_error_if_needed(true, bill_params), do: bill_params
