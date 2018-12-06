@@ -23,9 +23,9 @@ defmodule BillingGatewayWeb.FallbackController do
     |> render(BillingGatewayWeb.ErrorView, :"200", postback_url_error_message: error_message)
   end
 
-  def call(conn, {:invalid_phone_number, error_message}) do
+  def call(conn, {:bill_creation_error, bill_params}) do
     conn
-    |> render(BillingGatewayWeb.ErrorView, :"200", missing_bill_phone_number_message: error_message)
+    |> render(BillingGatewayWeb.ErrorView, :"200", bill_creation_error: bill_params)
   end
 
 end

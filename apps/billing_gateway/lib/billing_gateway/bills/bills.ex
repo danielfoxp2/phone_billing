@@ -1,17 +1,16 @@
 defmodule BillingGateway.Bills do
   alias BillingProcessor.BillPhoneNumberValidator
+  alias BillingProcessor.BillReferenceValidator
 
   def calculate(bill_params) do
-    get_phone_from(bill_params)
-    |> BillPhoneNumberValidator.is_valid?
-    |> calculate(bill_params)
+    bill_params
+    |> BillPhoneNumberValidator.validate()
+    |> BillReferenceValidator.validate()
+    |> calculate_bill()
   end
 
-  defp get_phone_from(%{"phone_number" => phone_number}), do: phone_number
-  defp get_phone_from(_bill_params), do: nil
-
-  defp calculate({:invalid_phone_number, _} = processing_cant_proceed, _bill_params), do: processing_cant_proceed
-  defp calculate({:ok}, bill_params) do
-
+  defp calculate_bill(%{"errors" => _errors} = bill_params), do: {:bill_creation_error, bill_params}
+  defp calculate_bill(bill_params) do
+    {:ok, "bill"}
   end
 end

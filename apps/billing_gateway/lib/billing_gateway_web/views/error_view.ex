@@ -7,8 +7,8 @@ defmodule BillingGatewayWeb.ErrorView do
     %{postback_url_error: error_message}
   end
 
-  def render("200.json", %{missing_bill_phone_number_message: error_message}) do
-    %{missing_bill_phone_number: error_message}
+  def render("200.json", %{bill_creation_error: bill_params}) do
+    %{bill_creation_error: bill_params}
   end
 
   # By default, Phoenix returns the status message from
