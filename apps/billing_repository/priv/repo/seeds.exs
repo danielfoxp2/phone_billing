@@ -9,6 +9,12 @@ second_end_call_record = %CallRecord{id: "4", call_id: 2, timestamp: "2019-11-23
 third_start_call_record = %CallRecord{id: "5", call_id: 3, destination: "6234448967", source: "6234558968", timestamp: "2019-11-23T13:45:56Z", type: "start"}
 third_end_call_record = %CallRecord{id: "6", call_id: 3, timestamp: "2019-11-23T13:55:56Z", type: "end"}
 
+fourth_start_call_record = %CallRecord{id: "7", call_id: 4, destination: "6298457834", source: "62984680648", timestamp: "2018-11-23T21:57:13Z", type: "start"}
+fourth_end_call_record = %CallRecord{id: "8", call_id: 4, timestamp: "2018-11-23T22:17:53Z", type: "end"}
+
+fifth_start_call_record = %CallRecord{id: "9", call_id: 5, destination: "6298457877", source: "62984680648", timestamp: "2018-11-25T15:45:23Z", type: "start"}
+fifth_end_call_record = %CallRecord{id: "10", call_id: 5, timestamp: "2018-11-25T16:08:05Z", type: "end"}
+
 BillingRepository.Repo.insert!(first_start_call_record)
 BillingRepository.Repo.insert!(first_end_call_record)
 
@@ -17,5 +23,11 @@ BillingRepository.Repo.insert!(second_end_call_record)
 
 BillingRepository.Repo.insert!(third_start_call_record)
 BillingRepository.Repo.insert!(third_end_call_record)
+
+BillingRepository.Repo.insert!(fourth_start_call_record)
+BillingRepository.Repo.insert!(fourth_end_call_record)
+
+BillingRepository.Repo.insert!(fifth_start_call_record)
+BillingRepository.Repo.insert!(fifth_end_call_record)
 
 
