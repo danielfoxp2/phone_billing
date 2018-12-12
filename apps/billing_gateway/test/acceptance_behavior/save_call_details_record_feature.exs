@@ -25,7 +25,7 @@ defmodule BillingGatewayWeb.SaveCallDetailsRecordFeature do
       post(conn, call_record_path(conn, :create), call_records_params: params)
       Process.sleep(2000)
 
-     call_records_process_result = Agent.get(:dummy_postback_url_agent, fn content -> content end)
+      call_records_process_result = Agent.get(:dummy_postback_url_agent, fn content -> content end)
       
       expected_result = expected_call_records_process_result()
 
@@ -36,7 +36,7 @@ defmodule BillingGatewayWeb.SaveCallDetailsRecordFeature do
 
   defp create_start_call_detail_record() do
     %{
-      "id" => "11",
+      "id" => "40",
       "type" => "start",
       "timestamp" => "2018-11-15T13:15:44Z",
       "call_id" => "123",
@@ -47,7 +47,7 @@ defmodule BillingGatewayWeb.SaveCallDetailsRecordFeature do
 
   defp create_end_call_detail_record() do
     %{
-      "id" => "10",
+      "id" => "41",
       "type" => "end",
       "timestamp" => "2018-11-15T13:23:14Z",
       "call_id" => "123"
