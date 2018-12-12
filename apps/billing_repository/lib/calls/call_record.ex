@@ -6,12 +6,10 @@ defmodule BillingRepository.Calls.CallRecord do
   schema "call_records" do
     field :id, :string, primary_key: true
     field :call_id, :integer
-    field :destination, :string
-    field :source, :string
-    field :timestamp, :string
+    field :destination, :integer
+    field :source, :integer
+    field :timestamp, :utc_datetime
     field :type, :string
-
-    timestamps()
   end
 
   @doc false
