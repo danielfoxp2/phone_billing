@@ -15,6 +15,9 @@ fourth_end_call_record = %CallRecord{id: "8", call_id: 4, timestamp: ~N[2018-11-
 fifth_start_call_record = %CallRecord{id: "9", call_id: 5, destination: 6298457877, source: 62984680648, timestamp: ~N[2018-11-25T15:45:23Z], type: "start"}
 fifth_end_call_record = %CallRecord{id: "10", call_id: 5, timestamp: ~N[2018-11-25T16:08:05Z], type: "end"}
 
+sixth_start_call_record = %CallRecord{id: "11", call_id: 6, destination: 6298457877, source: 62984680648, timestamp: ~N[2018-10-31T23:50:00Z], type: "start"}
+sixth_end_call_record = %CallRecord{id: "12", call_id: 6, timestamp: ~N[2018-11-01T00:08:05Z], type: "end"}
+
 BillingRepository.Repo.insert!(first_start_call_record)
 BillingRepository.Repo.insert!(first_end_call_record)
 
@@ -29,5 +32,8 @@ BillingRepository.Repo.insert!(fourth_end_call_record)
 
 BillingRepository.Repo.insert!(fifth_start_call_record)
 BillingRepository.Repo.insert!(fifth_end_call_record)
+
+BillingRepository.Repo.insert!(sixth_start_call_record)
+BillingRepository.Repo.insert!(sixth_end_call_record)
 
 
