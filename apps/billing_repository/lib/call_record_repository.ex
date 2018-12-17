@@ -1,11 +1,31 @@
 defmodule BillingRepository.CallRecordRepository do
+  import Ecto.Query
   alias BillingRepository.Calls.CallRecord
   alias BillingRepository.Repo
   alias Ecto.Multi
-
+  
   def insert_only_valid({grouped_calls, call_records}) do
     insertion_result = insert_in_parallel(grouped_calls)
     {insertion_result, call_records}
+  end
+
+  def get_calls(%{"phone_number" => phone_number, "reference_period" => <<month::bytes-size(2)>> <> "/" <> <<year::bytes-size(4)>>}) do
+    {year, _} = Integer.parse(year)
+    {month, _} = Integer.parse(month)
+
+    subselect = from c in CallRecord,
+    where: c.source == ^phone_number
+    and fragment("date_part('year', ?)", c.timestamp) == ^year
+    and (fragment("date_part('month', ?)", c.timestamp) == ^month or 
+         fragment("date_part('month', ?)", c.timestamp) == ^(month - 1)),
+    select: c.call_id
+
+    call_records_of_reference_query = from call_record in CallRecord, 
+    inner_join: sub in subquery(subselect),
+    on: sub.call_id == call_record.call_id,
+    select: call_record
+
+    Repo.all(call_records_of_reference_query)
   end
 
   defp insert_in_parallel(grouped_calls) do
