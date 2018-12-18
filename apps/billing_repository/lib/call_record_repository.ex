@@ -10,6 +10,12 @@ defmodule BillingRepository.CallRecordRepository do
   end
 
   def get_calls(%{"phone_number" => phone_number, "reference_period" => <<month::bytes-size(2)>> <> "/" <> <<year::bytes-size(4)>>}) do
+    get_calls_query_for(phone_number, month, year)
+    |> Repo.all()
+    |> group_as_call()
+  end
+
+  defp get_calls_query_for(phone_number, month, year) do
     {year, _} = Integer.parse(year)
     {month, _} = Integer.parse(month)
 
@@ -25,9 +31,14 @@ defmodule BillingRepository.CallRecordRepository do
     on: sub.call_id == call_record.call_id,
     select: call_record
 
-    Repo.all(call_records_of_reference_query)
+    call_records_of_reference_query
   end
 
+  defp group_as_call(these_call_records) do
+    these_call_records
+    |> Enum.group_by(fn call_record -> call_record.call_id end)
+  end
+  
   defp insert_in_parallel(grouped_calls) do
     grouped_calls
     |> Enum.map(fn {_not_used, call} -> Task.async(fn -> insert_data_of(call) end) end)
