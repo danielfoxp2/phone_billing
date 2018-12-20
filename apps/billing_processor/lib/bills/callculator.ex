@@ -17,11 +17,19 @@ defmodule BillingProcessor.Bills.Callculator do
     Integer.floor_div(from_call_duration_in_seconds, one_minute)
   end
 
-  defp calculate_total_minutes_cost_with_this(minutes, charge_per_minute) do
-    (minutes * (charge_per_minute * 100)) / 100
+  defp calculate_total_minutes_cost_with_this(by_minutes, charge_per_minute) do
+    charge_per_minute
+    |> transform_in_cents()
+    |> multiply(by_minutes)
+    |> transform_back_to_reais()
   end
 
   defp sum_minutes_charged_with(total_per_minute, and_standing_charge) do
     total_per_minute + and_standing_charge
   end
+
+  defp transform_in_cents(this_charge_per_minute), do: this_charge_per_minute * 100
+  defp multiply(charge_per_minute, by_minute), do: charge_per_minute * by_minute
+  defp transform_back_to_reais(total_call_charge), do: total_call_charge / 100
+
 end
