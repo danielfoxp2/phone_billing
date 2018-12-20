@@ -5,7 +5,7 @@ defmodule BillingProcessor.Bills.Callculator do
     |> get_duration_in_seconds()
     |> get_only_accountable_call_minutes()
     |> calculate_total_minutes_cost_with_this(charge_per_minute)
-    |> sum_minutes_charged_with(standing_charge)
+    |> sum_charged_minutes_with(standing_charge)
   end
 
   defp get_duration_in_seconds([start_record, end_record]) do
@@ -24,7 +24,7 @@ defmodule BillingProcessor.Bills.Callculator do
     |> transform_back_to_reais()
   end
 
-  defp sum_minutes_charged_with(total_per_minute, and_standing_charge) do
+  defp sum_charged_minutes_with(total_per_minute, and_standing_charge) do
     total_per_minute + and_standing_charge
   end
 
