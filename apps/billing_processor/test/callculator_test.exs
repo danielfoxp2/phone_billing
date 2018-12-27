@@ -5,7 +5,7 @@ defmodule BillingProcessor.CallculatorTest do
   describe "calculate bill for time call from 6:00 to 22:00 (excluding)" do
     test "that standing charge is the same regardless how much time it takes" do
       five_minutes_call = get_a_five_minutes_call()
-      ten_minutes_call = get_a_ten_minutes_call()
+      ten_minutes_call = get_a_20_minutes_call_with_ten_minutes_charged()
       
       expect_result = 0.50
       standing_charge = 0.50
@@ -17,7 +17,7 @@ defmodule BillingProcessor.CallculatorTest do
 
     test "that call charges is charged by each closed sixty seconds" do
       five_minutes_call = get_a_five_minutes_call()
-      ten_minutes_call = get_a_ten_minutes_call()
+      ten_minutes_call = get_a_20_minutes_call_with_ten_minutes_charged()
 
       expect_result_for_five_minutes_call = 0.45
       expect_result_for_ten_minutes_call = 0.90
@@ -30,7 +30,7 @@ defmodule BillingProcessor.CallculatorTest do
     end
 
     test "that the total amount of the bill is the sum of the call charge and standing charge" do
-      ten_minutes_call = get_a_ten_minutes_call()
+      ten_minutes_call = get_a_20_minutes_call_with_ten_minutes_charged()
 
       expect_result_for_ten_minutes_call = 5.36
       standing_charge = 0.36
@@ -46,10 +46,10 @@ defmodule BillingProcessor.CallculatorTest do
       ]
     end
 
-    defp get_a_ten_minutes_call() do
+    defp get_a_20_minutes_call_with_ten_minutes_charged() do
       [
-        %{type: "start", call_id: 2, timestamp: get_date_time("2018-10-31T20:50:00Z")},
-        %{type: "end", call_id: 2, timestamp: get_date_time("2018-10-31T21:00:00Z")}
+        %{type: "start", call_id: 2, timestamp: get_date_time("2018-10-31T21:50:00Z")},
+        %{type: "end", call_id: 2, timestamp: get_date_time("2018-10-31T22:10:00Z")}
       ]
     end
 
