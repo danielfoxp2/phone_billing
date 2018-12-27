@@ -9,23 +9,27 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
   end
 
   defp adjust_start_time_limit([%{timestamp: start_record_timestamp}, end_record]) do
-    six_am = get_date_time("#{start_record_timestamp.year}-#{start_record_timestamp.month}-#{start_record_timestamp.day}T06:00:00Z") 
+    six_am = "06"
+    new_possible_start_record_timestamp = generate(six_am, start_record_timestamp) 
     
-    DateTime.compare(start_record_timestamp, six_am)
-    |> return_start_time_for_this(start_record_timestamp, six_am)
+    DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
+    |> return_start_time_for_this(start_record_timestamp, new_possible_start_record_timestamp)
     |> mount_start_result(end_record)
   end
 
   defp adjust_end_time_limit([start_record, %{timestamp: end_record_timestamp}]) do
-    ten_pm = get_date_time("#{end_record_timestamp.year}-#{end_record_timestamp.month}-#{end_record_timestamp.day}T22:00:00Z") 
-    
-    DateTime.compare(end_record_timestamp, ten_pm)
-    |> return_end_time_for_this(end_record_timestamp, ten_pm)
+    ten_pm = "22"
+    new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
+
+    DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
+    |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
     |> mount_end_result(start_record)
   end
 
-  defp get_date_time(date) do
-    {:ok, converted_date, 0} = DateTime.from_iso8601(date)
+  defp generate(hour, date) do
+    date_as_iso = "#{date.year}-#{date.month}-#{date.day}T#{hour}:00:00Z"
+    {:ok, converted_date, 0} = DateTime.from_iso8601(date_as_iso)
+
     converted_date
   end
 
