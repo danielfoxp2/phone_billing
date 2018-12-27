@@ -21,9 +21,9 @@ defmodule BillingProcessor.ChargedMinutesTest do
   end
 
   describe "charged minutes from call when call ends after 21:59:59" do
-    test "should return only the minutes before 22:00:00" do
+    test "should return only full minutes before 22:00:00" do
       call = get_a_call_ending_after_10_pm()
-      expected_result = 5
+      expected_result = 2
 
       assert ChargedMinutes.from(call) == expected_result
     end
@@ -37,7 +37,6 @@ defmodule BillingProcessor.ChargedMinutesTest do
       assert ChargedMinutes.from(call) == expected_result
     end
   end
-
 
   defp get_a_five_minutes_call_in_stardard_time_call() do
     [
@@ -55,8 +54,8 @@ defmodule BillingProcessor.ChargedMinutesTest do
 
   defp get_a_call_ending_after_10_pm() do
     [
-      %{type: "start", call_id: 1, timestamp: get_date_time("2018-10-31T21:55:00Z")},
-      %{type: "end", call_id: 1, timestamp: get_date_time("2018-10-31T22:05:00Z")}
+      %{type: "start", call_id: 1, timestamp: get_date_time("2018-10-31T21:57:13Z")},
+      %{type: "end", call_id: 1, timestamp: get_date_time("2018-10-31T22:17:53Z")}
     ]
   end
 
