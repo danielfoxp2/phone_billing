@@ -5,10 +5,10 @@ defmodule BillingProcessor.Bills.BillDetails do
   def build({calls, taxes}) do
     calls
     |> Map.values()
-    |> Enum.map(fn call -> metodo(call, taxes) end)
+    |> Enum.map(fn call -> mount_bill_detail_of(call, taxes) end)
   end
 
-  defp metodo([start_call_record, _end_call_record] = call, taxes) do
+  defp mount_bill_detail_of([start_call_record, _end_call_record] = call, taxes) do
     %{
       destination: start_call_record.destination,
       call_start_date: "#{start_call_record.timestamp.day}-#{start_call_record.timestamp.month}-#{start_call_record.timestamp.year}",
@@ -30,6 +30,6 @@ defmodule BillingProcessor.Bills.BillDetails do
     "R$ #{price}"
   end
 
-  defp format(value), do: String.pad_leading("#{value}", 2, "0")
+  defp format(time), do: String.pad_leading("#{time}", 2, "0")
 
 end
