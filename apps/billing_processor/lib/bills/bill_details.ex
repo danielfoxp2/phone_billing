@@ -3,17 +3,29 @@ defmodule BillingProcessor.Bills.BillDetails do
   alias BillingProcessor.Bills.Callculator
   alias BillingProcessor.Bills.BillDetailsFormatter
 
-  def build({calls, taxes}) do
-    calls
-    |> Map.values()
-    |> Enum.reduce(%{bill_total: 0, bill_details: []}, fn call, %{bill_total: bill_total, bill_details: bill_details} -> 
-      call_price = Callculator.get_total_of(call, taxes.standing_charge, taxes.call_charge)
-      bill_total = bill_total + get_in_cents(call_price)
-      bill_details = bill_details ++ [mount_bill_detail_of(call, call_price)]
-
-      %{bill_total: bill_total, bill_details: bill_details}
-    end)
+  def build({grouped_calls, taxes}) do
+    grouped_calls
+    |> get_all_calls()
+    |> mount_bill_details(taxes)
     |> format_total_of()
+  end
+
+  defp get_all_calls(grouped_calls), do: Map.values(grouped_calls) 
+
+  defp mount_bill_details(calls, taxes) do
+    initial_bill_details = %{bill_total: 0, bill_details: []}
+    
+    Enum.reduce(calls, initial_bill_details, fn call, %{bill_total: bill_total, bill_details: bill_details} -> 
+      mount_bill(call, bill_total, bill_details, taxes)
+    end)
+  end
+
+  defp mount_bill(call, bill_total, bill_details, taxes) do
+    call_price = Callculator.get_total_of(call, taxes.standing_charge, taxes.call_charge)
+    bill_total = bill_total + get_in_cents(call_price)
+    bill_details = bill_details ++ [mount_bill_detail_of(call, call_price)]
+
+    %{bill_total: bill_total, bill_details: bill_details}
   end
 
   defp mount_bill_detail_of([start_call_record, _end_call_record] = call, call_price) do
