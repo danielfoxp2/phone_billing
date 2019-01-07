@@ -7,7 +7,8 @@ defmodule BillingProcessor.BillDetailsTest do
     test "should mount the details of each call of the bill" do
       calls = CallFixture.get_calls()
       taxes = %{standing_charge: 0.36, call_charge: 0.50}
-      expected_result = [get_first_bill_detail(), get_second_bill_detail()]
+      expected_bill_total = "R$ 15,72"
+      expected_result = %{bill_total: expected_bill_total, bill_details: [get_first_bill_detail(), get_second_bill_detail()]}
 
       assert BillDetails.build({calls, taxes}) == expected_result
     end
