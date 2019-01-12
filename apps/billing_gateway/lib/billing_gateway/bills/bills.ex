@@ -1,6 +1,9 @@
 defmodule BillingGateway.Bills do
   alias BillingProcessor.BillPhoneNumberValidator
   alias BillingProcessor.BillReferenceValidator
+  alias BillingRepository.CallRecordRepository
+  alias BillingRepository.Bills.TariffRepository
+  alias BillingProcessor.Bills.FullBill
 
   def calculate(bill_params) do
     bill_params
@@ -11,6 +14,10 @@ defmodule BillingGateway.Bills do
 
   defp calculate_bill(%{"errors" => _errors} = bill_params), do: {:bill_creation_error, bill_params}
   defp calculate_bill(bill_params) do
-    {:ok, "bill"}
+    taxes = TariffRepository.get_taxes(bill_params)
+
+    bill_params
+    |> CallRecordRepository.get_calls()
+    |> FullBill.build(taxes, bill_params)
   end
 end

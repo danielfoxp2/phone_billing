@@ -36,4 +36,4 @@ BillingRepository.Repo.insert!(fifth_end_call_record)
 BillingRepository.Repo.insert!(sixth_start_call_record)
 BillingRepository.Repo.insert!(sixth_end_call_record)
 
-
+BillingRepository.Repo.query!("insert into tariffs (reference, standing_charge, call_charge) values(201811, 0.36, 0.09)")

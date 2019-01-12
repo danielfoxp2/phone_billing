@@ -22,6 +22,48 @@ defmodule BillingGatewayWeb.CalculateBillFeature do
 
       assert json_response(conn, 200)["bill_creation_error"] == expected_result
     end
+
+    test "Should create the bill for closed period" , %{conn: conn} do
+      params = %{"phone_number" => "62984680648", "reference_period" => "11/2018"}
+
+      conn = get(conn, bill_path(conn, :calculate), bill_params: params)
+      expected_result = mount_bill()
+      
+      assert json_response(conn, 200)["bill"] == expected_result
+    end
     
+  end
+
+  defp mount_bill() do
+    %{
+      "phone_number" => "62984680648", 
+      "reference_period" => "11/2018",
+      "bill" => %{
+			    "bill_total" => "R$ 3,24",
+          "bill_details" => [
+            %{
+              "destination" => 6298457834,
+					    "call_start_date" => "23-11-2018",
+					    "call_start_time" => "21:57:13",
+					    "call_duration" => "0h20m40s",
+					    "call_price" => "R$ 0,54"
+            },
+            %{
+              "destination" => 6298457877,
+					    "call_start_date" => "25-11-2018",
+					    "call_start_time" => "15:45:23",
+					    "call_duration" => "0h22m42s",
+					    "call_price" => "R$ 2,34"
+            },
+            %{
+              "destination" => 6298457877,
+              "call_start_date" => "31-10-2018",
+              "call_start_time" => "23:50:00",
+              "call_duration" => "0h18m05s",
+              "call_price" => "R$ 0,36"
+            }
+          ]
+      }
+    }
   end
 end

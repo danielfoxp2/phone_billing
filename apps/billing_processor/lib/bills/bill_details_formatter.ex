@@ -1,5 +1,6 @@
 defmodule BillingProcessor.Bills.BillDetailsFormatter do
   
+  def format(date, :date_y_m_d), do: "#{format(date.year)}-#{format(date.month)}-#{format(date.day)}"
   def format(start, :start_date), do: "#{format(start.day)}-#{format(start.month)}-#{format(start.year)}"
   def format(start, :start_time), do: "#{format(start.hour)}:#{format(start.minute)}:#{format(start.second)}"
   def format(call_duration, :duration) do
