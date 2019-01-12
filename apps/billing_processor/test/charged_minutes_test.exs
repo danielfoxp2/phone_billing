@@ -48,11 +48,20 @@ defmodule BillingProcessor.ChargedMinutesTest do
   end
 
   describe "charged minutes from call when call starts before 22:00:00 in one day and ends after 06:00:00 of the next day" do
-    test "should return only accountable minutes" do
-      call = get_a_call_starting_after_9_50_pm_and_ending_8_10_am_of_the_next_day()
+    test "should return only accountable minutes of each day" do
+      call = get_a_call_starting_9_50_pm_and_ending_8_10_am_of_the_next_day()
       expected_result = 140
 
       assert ChargedMinutes.from(call) == expected_result
+    end
+  end
+
+  describe "charged minutes from call when call traverse multiples days" do
+    test "should return only accountable minutes of each traversed day" do
+      call = get_a_call_starting_9_pm_of_one_day_and_ending_11_am_five_days_later()
+      expected_result_in_minutes = 3240
+
+      assert ChargedMinutes.from(call) == expected_result_in_minutes
     end
   end
 
@@ -91,10 +100,17 @@ defmodule BillingProcessor.ChargedMinutesTest do
     ]
   end
 
-  defp get_a_call_starting_after_9_50_pm_and_ending_8_10_am_of_the_next_day do
+  defp get_a_call_starting_9_50_pm_and_ending_8_10_am_of_the_next_day do
     [
       %{type: "start", call_id: 1, timestamp: get_date_time("2018-10-31T21:50:00Z")},
       %{type: "end", call_id: 1, timestamp: get_date_time("2018-11-01T08:10:05Z")}
+    ]
+  end
+
+  defp get_a_call_starting_9_pm_of_one_day_and_ending_11_am_five_days_later do
+    [
+      %{type: "start", call_id: 1, timestamp: get_date_time("2018-10-31T21:00:00Z")},
+      %{type: "end", call_id: 1, timestamp: get_date_time("2018-11-04T11:00:05Z")}
     ]
   end
 

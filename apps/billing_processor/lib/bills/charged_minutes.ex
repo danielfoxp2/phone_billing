@@ -39,7 +39,18 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     |> get_duration_in_seconds()
     |> get_only_accountable_call_minutes()
   end
+  defp calculate_accountable_minutes_for([days, start_record, end_record]) do
+    first_and_last_day = 2
+    amount_of_hour_in_a_full_day = 16
+    one_hour_in_minutes = 60
+    call = [%{days: 2}, start_record, end_record]
+    full_days = days.days - first_and_last_day
 
+    accountable_minutes_of_full_days = full_days * (amount_of_hour_in_a_full_day * one_hour_in_minutes)
+    accountable_minutes_of_first_and_last_day = adjust_start_time_limit(call)
+
+    accountable_minutes_of_full_days + accountable_minutes_of_first_and_last_day
+  end
 
   # Quando a ligação inicia e termina no mesmo dia então basta verificar 
   # a quantidade de minutos tarifados no próprio dia
@@ -54,8 +65,7 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
 
   # Como a ligação inicia-se em um dia e termina em outro é necessário verificar 
   # Quantos minutos foram tarifados para o dia inicial e para o dia final
-  defp adjust_start_time_limit([%{days: 2} = days, %{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}]) do
-    IO.puts "Nada a ve"
+  defp adjust_start_time_limit([%{days: 2}, %{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}]) do
     minutos_do_primeiro_dia = montar_call_com_start_record_e_10_pm_como_end_record(start_record_timestamp)
     |> calcular_minutos
 
@@ -73,10 +83,7 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     days = %{days: 1}
     first_day = [days, %{timestamp: start_record_timestamp}, %{timestamp: end_record_of_start_day}]
     adjust_start_time_limit(first_day)
-    |> IO.inspect
   end
-
-  
 
   #EndRegion montar_call_com_start_record_e_10_pm_como_end_record
 
