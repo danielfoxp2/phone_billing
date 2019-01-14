@@ -9,6 +9,13 @@ defmodule BillingRepository.Bills.TariffRepository do
     |> mount_result()
   end
 
+  def insert_taxes_if_needed_for(reference_period) do
+    reference_period
+    |> get_next()
+    |> get_insert_taxes_query()
+    |> Repo.query!()
+  end
+
   defp format_for_db(reference_period) do
     [month, year] = String.split(reference_period, "/")
 
@@ -35,6 +42,28 @@ defmodule BillingRepository.Bills.TariffRepository do
       standing_charge: standing_charge,
       call_charge: call_charge
     }
+  end
+
+  defp get_next(reference_period) do
+    [month, year] = String.split(reference_period, "/")
+    {parsed_month, _} = Integer.parse(month)
+    {parsed_year, _} = Integer.parse(year)
+
+    {:ok, first_day_of_month} = Date.new(parsed_year, parsed_month, 1)
+    next_reference = Date.add(first_day_of_month, 31)
+    formatted_month = String.pad_leading("#{next_reference.month}", 2, "0")
+
+    "#{next_reference.year}#{formatted_month}"
+  end
+
+  defp get_insert_taxes_query(reference_period) do
+    """
+      insert into tariffs (reference, standing_charge, call_charge)
+      select #{reference_period}, standing_charge, call_charge from tariffs t1 
+      where reference = (select max(reference) 
+                from tariffs t2 where reference < #{reference_period}) 
+      and not exists (select 1 from tariffs where reference = #{reference_period})
+    """
   end
 
 end

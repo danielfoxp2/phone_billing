@@ -16,6 +16,8 @@ defmodule BillingGateway.Bills do
   defp calculate_bill(bill_params) do
     taxes = TariffRepository.get_taxes(bill_params)
 
+    Task.start(fn -> TariffRepository.insert_taxes_if_needed_for(bill_params["reference_period"]) end)
+
     bill_params
     |> CallRecordRepository.get_calls()
     |> FullBill.build(taxes, bill_params)
