@@ -31,6 +31,15 @@ defmodule BillingGatewayWeb.CalculateBillFeature do
       
       assert json_response(conn, 200)["bill"] == expected_result
     end
+
+    test "Should create the bill for last closed period when reference period is not informed", %{conn: conn} do
+      params = %{"phone_number" => "62984689999"}
+
+      conn = get(conn, bill_path(conn, :calculate), bill_params: params)
+      expected_bill_for_last_period = mount_bill_for_last_period()
+
+      assert json_response(conn, 200)["bill"] == expected_bill_for_last_period
+    end
     
   end
 
@@ -63,6 +72,21 @@ defmodule BillingGatewayWeb.CalculateBillFeature do
               "call_price" => "R$ 0,36"
             }
           ]
+      }
+    }
+  end
+
+  defp mount_bill_for_last_period() do
+    actual_date = Date.utc_today()
+    previous_date = Date.add(actual_date, -31)
+    reference_period = "#{previous_date.month}/#{previous_date.year}"
+
+    %{
+      "phone_number" => "62984689999", 
+      "reference_period" => "#{reference_period}",
+      "bill" => %{
+			    "bill_total" => "R$ 0,00",
+          "bill_details" => []
       }
     }
   end

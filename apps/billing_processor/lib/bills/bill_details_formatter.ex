@@ -9,6 +9,7 @@ defmodule BillingProcessor.Bills.BillDetailsFormatter do
   def format(price, :price) do
     price
     |> Float.to_string()
+    |> String.pad_trailing(4, "0")
     |> String.replace(".", ",")
     |> get_currency()
   end

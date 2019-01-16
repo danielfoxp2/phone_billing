@@ -4,9 +4,11 @@ defmodule BillingGateway.Bills do
   alias BillingRepository.CallRecordRepository
   alias BillingRepository.Bills.TariffRepository
   alias BillingProcessor.Bills.FullBill
+  alias BillingProcessor.Bills.BillReference
 
   def calculate(bill_params) do
     bill_params
+    |> BillReference.get_last_month_if_needed(Date.utc_today())
     |> BillPhoneNumberValidator.validate()
     |> BillReferenceValidator.validate()
     |> calculate_bill()
