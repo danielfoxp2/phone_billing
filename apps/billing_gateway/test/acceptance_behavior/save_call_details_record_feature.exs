@@ -20,7 +20,7 @@ defmodule BillingGatewayWeb.SaveCallDetailsRecordFeature do
     end
 
     test "send to postback url data status of processed call records", %{conn: conn} do
-      params = %{call_records: create_consistent_call(20, 25) ++ create_inconsistent_call(30, 29), postback_url: "www.example.com"}
+      params = %{call_records: create_consistent_call(100, 110) ++ create_inconsistent_call(130, 111), postback_url: "www.example.com"}
      
       post(conn, call_record_path(conn, :create), call_records_params: params)
       Process.sleep(2000)
@@ -109,22 +109,22 @@ defmodule BillingGatewayWeb.SaveCallDetailsRecordFeature do
     [
       %{
         "dummy_postback_url_agent" => "dummy_postback_url_agent",
-        "id" => "30",
+        "id" => "130",
         "type" => "start",
         "timestamp" => "2018-11-15T13:20:14Z",
-        "call_id" => "29",
+        "call_id" => "111",
         "source" => "62984680648",
         "destination" => "62111222333",
-        "errors" => ["call record with id: 30 is duplicated in call records being inserted"]
+        "errors" => ["call record with id: 130 is duplicated in call records being inserted"]
       },
     
       %{
         "dummy_postback_url_agent" => "dummy_postback_url_agent",
-        "id" => "30",
+        "id" => "130",
         "type" => "end",
         "timestamp" => "2018-11-15T13:23:14Z",
-        "call_id" => "29",
-        "errors" => ["call record with id: 30 is duplicated in call records being inserted"]
+        "call_id" => "111",
+        "errors" => ["call record with id: 130 is duplicated in call records being inserted"]
       }
     ]
   end
