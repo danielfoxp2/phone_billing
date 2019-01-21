@@ -2,18 +2,29 @@ defmodule BillingProcessor.TaxesValidator do
   alias BillingProcessor.BillReferenceValidator
 
   @reference_period_message "The reference period should be informed with key 'reference_period' and formatted MM/AAAA"
-
-  def validate(%{"reference_period" => nil} = taxes) do
-    include(@reference_period_message, taxes)
-  end
-
-  def validate(%{"reference_period" => ""} = taxes) do
-    include(@reference_period_message, taxes)
-  end
+  @standing_charge_message "The standing charge should be informed with key 'standing_charge'"
 
   def validate(taxes) do
     taxes
-    |> Map.get("reference_period")
+    |> validate("reference_period")
+    |> validate("standing_charge")
+  end
+
+  def validate(%{"reference_period" => nil} = taxes, _field) do
+    include(@reference_period_message, taxes)
+  end
+
+  def validate(%{"reference_period" => ""} = taxes, _field) do
+    include(@reference_period_message, taxes)
+  end
+
+  def validate(%{"standing_charge" => nil} = taxes, _field) do
+    include(@standing_charge_message, taxes)
+  end
+
+  def validate(taxes, field) do
+    taxes
+    |> Map.get(field)
     |> is_valid(taxes)
   end
 
