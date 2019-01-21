@@ -35,32 +35,33 @@ defmodule BillingProcessor.TaxesValidatorTest do
       taxes_without_standing_charge = %{}
       
       error_message = "The standing charge should be informed with key 'standing_charge'"
-      expected_result_for_taxes_with_nil_standing_charge = %{"standing_charge" => nil, "errors" => [error_message]}
-      expected_result_for_taxes_with_empty_standing_charge = %{"standing_charge" => "", "errors" => [error_message]}
-      expected_result_for_taxes_without_standing_charge = %{"errors" => [error_message]}
 
-      assert TaxesValidator.validate(taxes_with_nil_standing_charge) == expected_result_for_taxes_with_nil_standing_charge
-      # assert TaxesValidator.validate(taxes_with_empty_standing_charge) == expected_result_for_taxes_with_empty_standing_charge
-      # assert TaxesValidator.validate(taxes_without_standing_charge) == expected_result_for_taxes_without_standing_charge
+      taxes_with_nil_standing_charge_and_error_message = TaxesValidator.validate(taxes_with_nil_standing_charge)
+      taxes_with_empty_standing_charge_and_error_message = TaxesValidator.validate(taxes_with_empty_standing_charge)
+      taxes_without_standing_charge_and_error_message = TaxesValidator.validate(taxes_without_standing_charge)
+
+      assert Enum.member?(taxes_with_nil_standing_charge_and_error_message["errors"], error_message)
+      assert Enum.member?(taxes_with_empty_standing_charge_and_error_message["errors"], error_message)
+      assert Enum.member?(taxes_without_standing_charge_and_error_message["errors"], error_message)
     end
 
-    # test "should invalidate if standing charge is not a number" do
-    #   valid_standing_charge_as_string = %{"standing_charge" => "0.56"}
-    #   valid_standing_charge_as_float = %{"standing_charge" => 0.47}
-    #   valid_standing_charge_as_integer = %{"standing_charge" => 10}
-    #   invalid_standing_charge_as_string = %{"standing_charge" => "xpto27"}
+    test "should invalidate if standing charge is not a number" do
+      valid_standing_charge_as_string = %{"standing_charge" => "0.56"}
+      valid_standing_charge_as_float = %{"standing_charge" => 0.47}
+      invalid_standing_charge_as_integer = %{"standing_charge" => 10}
+      invalid_standing_charge_as_string = %{"standing_charge" => "xpto27"}
 
-    #   error_message = "The standing charge should be a float number"
+      error_message = "The standing charge should be a float number"
 
-    #   expected_result_for_valid_standing_charge_as_string = %{"standing_charge" => "0.56"}
-    #   expected_result_for_valid_standing_charge_as_float = %{"standing_charge" => 0.47}
-    #   expected_result_for_valid_standing_charge_as_integer = %{"standing_charge" => 10}
-    #   expected_result_for_invalid_standing_charge_as_string = %{"standing_charge" => "xpto27", "errors" => [error_message]}
+      valid_standing_charge_as_string_without_error_message = TaxesValidator.validate(valid_standing_charge_as_string)
+      valid_standing_charge_as_float_without_error_message = TaxesValidator.validate(valid_standing_charge_as_float)
+      invalid_standing_charge_as_integer_without_error_message = TaxesValidator.validate(invalid_standing_charge_as_integer)
+      invalid_standing_charge_as_string_with_error_message = TaxesValidator.validate(invalid_standing_charge_as_string)
 
-    #   assert TaxesValidator.validate(valid_standing_charge_as_string) == expected_result_for_valid_standing_charge_as_string
-    #   assert TaxesValidator.validate(valid_standing_charge_as_float) == expected_result_for_valid_standing_charge_as_float
-    #   assert TaxesValidator.validate(valid_standing_charge_as_integer) == expected_result_for_valid_standing_charge_as_integer
-    #   assert TaxesValidator.validate(invalid_standing_charge_as_string) == expected_result_for_invalid_standing_charge_as_string
-    # end
+      assert Enum.member?(valid_standing_charge_as_string_without_error_message["errors"], error_message) == false
+      assert Enum.member?(valid_standing_charge_as_float_without_error_message["errors"], error_message) == false
+      assert Enum.member?(invalid_standing_charge_as_integer_without_error_message["errors"], error_message)
+      assert Enum.member?(invalid_standing_charge_as_string_with_error_message["errors"], error_message)
+    end
   end
 end
