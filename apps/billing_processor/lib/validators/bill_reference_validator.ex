@@ -9,6 +9,12 @@ defmodule BillingProcessor.BillReferenceValidator do
     |> mount_error_if_needed(bill_params)
   end
 
+  def is_valid?(reference) do
+    reference
+    |> valid_format?()
+    |> valid_month?()
+  end
+
   defp valid_format?(reference) do
     mm_aaaa_format_regex = ~r/^\d{2}\/\d{4}+$/
     is_valid = Regex.match?(mm_aaaa_format_regex, reference)
@@ -16,7 +22,7 @@ defmodule BillingProcessor.BillReferenceValidator do
     {is_valid, reference}
   end
 
-  defp valid_month?({false, reference}), do: false
+  defp valid_month?({false, _reference}), do: false
   defp valid_month?({true, reference}) do
     {month, _} = get_month_from(reference)
     
