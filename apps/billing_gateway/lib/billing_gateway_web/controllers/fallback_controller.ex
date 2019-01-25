@@ -28,4 +28,9 @@ defmodule BillingGatewayWeb.FallbackController do
     |> render(BillingGatewayWeb.ErrorView, :"200", bill_creation_error: bill_params)
   end
 
+  def call(conn, {:taxes_error, reason}) do
+    conn
+    |> render(BillingGatewayWeb.ErrorView, :"200", taxes_error: reason)
+  end
+
 end

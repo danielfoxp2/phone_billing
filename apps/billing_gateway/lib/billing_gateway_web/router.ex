@@ -10,5 +10,6 @@ defmodule BillingGatewayWeb.Router do
 
     resources "/call_records", CallRecordController, except: [:new, :edit]
     get "/bill", BillController, :calculate
+    post "/taxes", TaxesController, :create
   end
 end

@@ -11,6 +11,10 @@ defmodule BillingGatewayWeb.ErrorView do
     %{bill_creation_error: bill_params}
   end
 
+  def render("200.json", %{taxes_error: reason}) do
+    %{taxes_error: reason}
+  end
+
   # By default, Phoenix returns the status message from
   # the template name. For example, "404.json" becomes
   # "Not Found".

@@ -16,6 +16,13 @@ defmodule BillingRepository.Bills.TariffRepository do
     |> Repo.query!()
   end
 
+  def insert_new(taxes) do
+    taxes
+    |> get_insert_new_taxes_query()
+    |> Repo.query()
+    |> mount_response()
+  end
+
   defp format_for_db(reference_period) do
     [month, year] = String.split(reference_period, "/")
 
@@ -35,6 +42,9 @@ defmodule BillingRepository.Bills.TariffRepository do
     |> Enum.flat_map(fn elemento -> elemento end)
     |> mount_taxes()
   end
+
+  defp mount_response({:ok, _}), do: {:ok, "Taxes inserted"}
+  defp mount_response(result), do: result  
 
   defp mount_taxes([]), do: %{}
   defp mount_taxes([standing_charge, call_charge]) do 
@@ -63,6 +73,15 @@ defmodule BillingRepository.Bills.TariffRepository do
       where reference = (select max(reference) 
                 from tariffs t2 where reference < #{reference_period}) 
       and not exists (select 1 from tariffs where reference = #{reference_period})
+    """
+  end
+
+  defp get_insert_new_taxes_query(taxes) do
+    formatted_refence_period = format_for_db(taxes["reference_period"])
+
+    """
+      insert into tariffs (reference, standing_charge, call_charge)
+      values (#{formatted_refence_period}, #{taxes["standing_charge"]}, #{taxes["call_charge"]})
     """
   end
 
