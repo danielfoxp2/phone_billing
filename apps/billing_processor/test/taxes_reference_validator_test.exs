@@ -4,7 +4,7 @@ defmodule BillingProcessor.TaxesReferenceValidatorTest do
 
   describe "the validation of new taxes insertion when doesn't exists the same reference persisted" do
     test "should validate the insertion for informed reference" do
-      reference_from_database = nil
+      reference_from_database = %{reference_period: nil}
       taxes_params = %{"reference_period" => "11/2018"}
       validate_response = TaxesReferenceValidator.validate(reference_from_database, taxes_params)
       error_value = Map.get(validate_response, "errors")
@@ -15,7 +15,7 @@ defmodule BillingProcessor.TaxesReferenceValidatorTest do
 
   describe "the validation of new taxes insertion when exists the same reference persisted" do
     test "should validate if the persisted reference is equal then current reference" do
-      reference_from_database = get_current_reference_as_db_integer()
+      reference_from_database = %{reference_period: get_current_reference_as_db_integer()}
       taxes_params = %{"reference_period" => get_current_reference_informed_by_user()}
       validate_response = TaxesReferenceValidator.validate(reference_from_database, taxes_params)
       error_value = Map.get(validate_response, "errors")
@@ -24,7 +24,7 @@ defmodule BillingProcessor.TaxesReferenceValidatorTest do
     end
 
     test "should validate if the persisted reference is greater then current reference" do
-      reference_from_database = get_next_reference_based_on_current_month_as_db_integer()
+      reference_from_database = %{reference_period: get_next_reference_based_on_current_month_as_db_integer()}
       taxes_params = %{"reference_period" => get_next_reference_based_on_current_month_informed_by_user()}
       validate_response = TaxesReferenceValidator.validate(reference_from_database, taxes_params)
       error_value = Map.get(validate_response, "errors")
@@ -33,7 +33,7 @@ defmodule BillingProcessor.TaxesReferenceValidatorTest do
     end
 
     test "should invalidate if the persisted reference is lower then current reference" do
-      reference_from_database = get_previous_reference_based_on_current_month_as_db_integer()
+      reference_from_database = %{reference_period: get_previous_reference_based_on_current_month_as_db_integer()}
       taxes_params = %{"reference_period" => get_previous_reference_based_on_current_month_informed_by_user()}
       validate_response = TaxesReferenceValidator.validate(reference_from_database, taxes_params)
       error_value = Map.get(validate_response, "errors")

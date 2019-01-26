@@ -1,10 +1,11 @@
 defmodule BillingProcessor.TaxesReferenceValidator do
   
-  def validate(reference_from_database, taxes_params) do
+  def validate(%{reference_period: reference_from_database}, taxes_params) do
     get_current_reference()
     |> is_greater_than?(reference_from_database)
     |> mount_error_for(taxes_params)
   end
+  def validate(_reference_from_database, taxes_params), do: taxes_params
 
   defp get_current_reference() do
     today = Date.utc_today()
