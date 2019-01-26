@@ -14,27 +14,27 @@ defmodule BillingProcessor.TaxesValidator do
     |> validate("call_charge")
   end
 
-  def validate(%{"reference_period" => nil} = taxes, _field) do
+  def validate(%{"reference_period" => nil} = taxes, "reference_period") do
     include(@reference_period_message, taxes)
   end
 
-  def validate(%{"reference_period" => ""} = taxes, _field) do
+  def validate(%{"reference_period" => ""} = taxes, "reference_period") do
     include(@reference_period_message, taxes)
   end
 
-  def validate(%{"standing_charge" => nil} = taxes, _field) do
+  def validate(%{"standing_charge" => nil} = taxes, "standing_charge") do
     include(@standing_charge_message, taxes)
   end
 
-  def validate(%{"standing_charge" => ""} = taxes, _field) do
+  def validate(%{"standing_charge" => ""} = taxes, "standing_charge") do
     include(@standing_charge_message, taxes)
   end
 
-  def validate(%{"call_charge" => nil} = taxes, _field) do
+  def validate(%{"call_charge" => nil} = taxes, "call_charge") do
     include(@call_charge_message, taxes)
   end
 
-  def validate(%{"call_charge" => ""} = taxes, _field) do
+  def validate(%{"call_charge" => ""} = taxes, "call_charge") do
     include(@call_charge_message, taxes)
   end
 
