@@ -6,7 +6,8 @@ defmodule PhoneBilling.MixProject do
       apps_path: "apps",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      docs: docs()
     ]
   end
 
@@ -24,6 +25,13 @@ defmodule PhoneBilling.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run apps/billing_repository/priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "test":       ["ecto.reset", "test"]
+    ]
+  end
+
+  defp docs do
+    [
+      source_url: "https://github.com/danielfoxp2/phone_billing",
+      extras: ["README.md", "api_documentation.md"]
     ]
   end
 end
