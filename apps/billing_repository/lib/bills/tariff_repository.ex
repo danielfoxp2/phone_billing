@@ -18,8 +18,8 @@ defmodule BillingRepository.Bills.TariffRepository do
 
   def insert_new(taxes) do
     taxes
-    |> get_insert_new_taxes_query()
-    |> Repo.query()
+    |> delete_reference_if_exists()
+    |> insert_new_taxes()
     |> mount_response()
   end
 
@@ -31,7 +31,7 @@ defmodule BillingRepository.Bills.TariffRepository do
 
   defp get_query(reference_period) do
     """
-      select standing_charge, call_charge
+      select reference, standing_charge, call_charge
       from tariffs
       where reference = #{reference_period}
     """
@@ -47,8 +47,9 @@ defmodule BillingRepository.Bills.TariffRepository do
   defp mount_response(result), do: result  
 
   defp mount_taxes([]), do: %{}
-  defp mount_taxes([standing_charge, call_charge]) do 
+  defp mount_taxes([reference_period, standing_charge, call_charge]) do 
     %{
+      reference_period: reference_period,
       standing_charge: standing_charge,
       call_charge: call_charge
     }
@@ -74,6 +75,19 @@ defmodule BillingRepository.Bills.TariffRepository do
                 from tariffs t2 where reference < #{reference_period}) 
       and not exists (select 1 from tariffs where reference = #{reference_period})
     """
+  end
+
+  defp delete_reference_if_exists(taxes) do
+    reference_as_integer = format_for_db(taxes["reference_period"])
+    Repo.query("delete from tariffs where reference = #{reference_as_integer}")
+
+    taxes
+  end
+
+  defp insert_new_taxes(taxes) do
+    taxes
+    |> get_insert_new_taxes_query()
+    |> Repo.query()
   end
 
   defp get_insert_new_taxes_query(taxes) do
