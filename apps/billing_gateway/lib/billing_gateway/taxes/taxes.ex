@@ -10,6 +10,7 @@ defmodule BillingGateway.Taxes do
     |> insert_new_taxes_when_there_is_no_error()
   end
 
+  defp validate_if_reference_can_be_updated(%{"errors" => _errors} = taxes_params), do: taxes_params
   defp validate_if_reference_can_be_updated(taxes_params) do
     TariffRepository.get_taxes(taxes_params)
     |> TaxesReferenceValidator.validate(taxes_params)
