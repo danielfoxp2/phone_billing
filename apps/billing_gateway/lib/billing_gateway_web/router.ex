@@ -8,7 +8,7 @@ defmodule BillingGatewayWeb.Router do
   scope "/api", BillingGatewayWeb do
     pipe_through :api
 
-    resources "/call_records", CallRecordController, except: [:new, :edit]
+    post "/call_records", CallRecordController, :create
     get "/bill", BillController, :calculate
     post "/taxes", TaxesController, :create
   end
