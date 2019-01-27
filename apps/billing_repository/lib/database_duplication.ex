@@ -13,10 +13,11 @@ defmodule BillingRepository.DatabaseDuplication do
     |> Enum.flat_map(&Task.await/1)
   end
 
+  defp get_duplicated(%{"id" => id, "call_id" => nil}), do: get_duplicated(%{"id" => id, "call_id" => 0})
+  defp get_duplicated(%{"id" => id, "call_id" => ""}), do: get_duplicated(%{"id" => id, "call_id" => 0})
   defp get_duplicated(%{"id" => id, "call_id" => call_id}) do
     Ecto.Adapters.SQL.query!(Repo, get_duplicated_query(id, call_id))
     |> mount_result
-
   end
   defp get_duplicated(%{"id" => id}) do
     get_duplicated(%{"id" => id, "call_id" => 0})
@@ -24,6 +25,7 @@ defmodule BillingRepository.DatabaseDuplication do
   defp get_duplicated(%{"call_id" => call_id}) do
     get_duplicated(%{"id" => 0, "call_id" => call_id})
   end
+  defp get_duplicated(_call_record), do: get_duplicated(%{"id" => 0, "call_id" => 0})
 
   defp get_duplicated_query(id, call_id) do
     """

@@ -2,6 +2,15 @@ defmodule DatabaseDuplicationTest do
   use ExUnit.Case
   alias BillingRepository.DatabaseDuplication
 
+  test "should ignore call records without call_id" do
+    call_records = [%{"call_id" => 1}, %{}, %{"call_id" => nil}, %{"call_id" => ""} ]
+    expected_result = {[call_id: 1], [%{"call_id" => 1}, %{}, %{"call_id" => nil}, %{"call_id" => ""}]}
+
+    duplicated_keys = DatabaseDuplication.search_for(call_records)
+
+    assert duplicated_keys == expected_result
+  end
+
   test "should return a call record id for a given id if it is duplicated" do
     call_records = [%{"id" => 1}]
     expected_result = {[id: "1"], [%{"id" => 1}]}
