@@ -2,7 +2,6 @@ defmodule BillingGatewayWeb.CallRecordController do
   use BillingGatewayWeb, :controller
 
   alias BillingGateway.Calls
-  alias BillingRepository.Calls.CallRecord
 
   action_fallback BillingGatewayWeb.FallbackController
 

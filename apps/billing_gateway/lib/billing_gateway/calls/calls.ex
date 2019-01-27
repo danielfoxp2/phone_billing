@@ -3,9 +3,7 @@ defmodule BillingGateway.Calls do
   The Calls context.
   """
 
-  alias BillingRepository.Repo
   alias BillingRepository.Protocol
-  alias BillingRepository.Calls.CallRecord
   alias BillingRepository.DatabaseDuplication
   alias BillingRepository.CallRecordRepository
   alias BillingProcessor.PostbackUrlValidator
@@ -30,7 +28,7 @@ defmodule BillingGateway.Calls do
     {:ok, get_protocol_number()}
   end
 
-  defp process(%{"call_records" => call_records} = call_records_params, postback_url) do
+  defp process(%{"call_records" => call_records}, postback_url) do
     call_records
     |> CallRecordContentValidator.validate()
     |> DuplicationValidator.add_errors_for_duplicated()
