@@ -19,6 +19,7 @@ $ curl localhost:4000/api/taxes \
 
 Field | Description
 ----- | -----------
+**taxes_params** | Object containing the data to be inserted.
 **reference_period** | Reference to set taxes. Should have `MM/YYYY` format.
 **call_charge** | Charged value of each minute of call. Should be a float. Integers are not considered floats by the application.
 **standing_charge** | Default value charged one time in the call. Should be a float. Integers are not considered floats by the application.
@@ -130,22 +131,231 @@ The application will return each inconsistence found in a list. The possible inc
 ```
 ## Call Records
 
+The call records resource is intended to be called to save call records. It will process all call records and send the result to the postback URL.
+
 ### Request example
+```javascript
+// call_records_example.json
+{
+	"call_records_params":
+	{
+		"postback_url": "www.example.com/my-receiver-action",
+		"call_records": 
+		[
+			{
+			  "id": "40",
+			  "type": "start",
+			  "timestamp": "2018-11-15T13:15:44Z",
+			  "call_id": "123",
+			  "source": "62984680648",
+			  "destination": "62111222333"
+    	}, 
+			{
+        "id": "41",
+        "type": "end",
+        "timestamp": "2018-11-15T13:23:14Z",
+        "call_id": "123"
+			}
+    ]
+	}
+}
+```
 
 ```bash
-$ curl localhost:4000/api/taxes \
+$ curl localhost:4000/api/call_records \
   -H "Content-Type: application/json" \
-  -d taxes_params[call_charge]=0.05 
+  -d @call_records_example.json
 ```
 ### Arguments
 
-### Responses example
+Field | Description
+----- | -----------
+**call_records_params** | Object containing the data to be inserted.
+**postback_url** | The URL that PhoneBilling will call to send the result of processing the call records informed.
+**call_records** | A list of call records to be persisted.
 
-#### On Success
+### Response example
 
-#### On Validation Errors
+The call records insert processing is done asynchronously, because of it the response is split in two phases:
+
+1ª - The caller will receive a protocol number as response of call record resource. The protocol number identify the call records chunk processed after the end of the second phase.
+
+```javascript
+{
+  "protocol_number": 1
+}
+ ```
+
+2ª - As the caller can send a big load of call records, in order to avoid blocking the application while these call records is being processed this processing is done asynchronously and the result is sent to the `postback_url` informed.
+
+```javascript
+{
+  "received_records_quantity":"2",
+  "consistent_records_quantity":"2",
+  "inconsistent_records_quantity":"0",
+  "database_inconsistent_records_quantity":"0",
+  "failed_records_on_validation": [],
+  "failed_records_on_insert": []
+}
+```
+
+#### Response fields
+
+Field | Description
+----- | -----------
+**received_records_quantity** | Represents the total quantity of call records received to be processed.
+**consistent_records_quantity** | Represents the total quantity of call records received that comply with the consistence call records rules.
+**inconsistent_records_quantity** | Represents the total quantity of call records received that not comply with the consistence call records rules.
+**database_inconsistent_records_quantity** | Represents the total quantity of call records that has ids or call ids duplicated with call records from database.
+**failed_records_on_validation** | Represents the list of call records that has some inconsistence.
+**failed_records_on_insert** | Represents the list of call records that returned `{:error, reason}` on database insertion moment.
 
 
+
+### Validations
+Before insert the call records, the application executes a set of validations to garantee that call records with inconsistences do not get inserted in database. 
+
+These validations also serves to inform the PhoneBilling caller why each refused call record is invalid.
+
+The set o validation consists in:
+
+* Content;
+* Duplication;
+* Call structure;
+
+#### Validations of Content
+The content validation takes care of information domain and required fields.
+
+Below are described error messages for each content validation of call records:
+
+#### when it does not contains the id field or the id is null or empty
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "call record don't have id"
+  ]
+}
+```
+
+#### when it does not contains the type field
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "call record don't have type"
+  ]
+}
+```
+
+#### when the type field is different of 'start' or 'end'
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "Call record has a wrong type: '<wrong_type_description_here>'. Only 'start' and 'end' types are allowed."
+  ]
+}
+```
+
+#### when it does not contains the timestamp field or the timestamp is null or empty
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "call record don't have timestamp"
+  ]
+}
+```
+
+#### when timestamp has not 'YYYY-MM-DDThh:mm:ssZ' utc format
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "Call record has a wrong timestamp: '<wrong_timestamp_here>'. The timestamp must have this format: YYYY-MM-DDThh:mm:ssZ"
+  ]
+}
+```
+
+#### when it does not contains the call id field or call id is null
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "call record don't have call_id"
+  ]
+}
+```
+
+#### when call id is not a integer
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "Call record has a wrong call_id: '<wrong_call_id_here>'. The call id must be integer."
+  ]
+}
+```
+
+#### when it does not contains the source field or the source is null in a start record
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "call record don't have source"
+  ]
+}
+```
+
+#### when source has not AAXXXXXXXX or AAXXXXXXXXX format
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    `
+      Call record has a wrong source: '<wrong_source_here>'. 
+      The phone number format is AAXXXXXXXXX, where AA is the area code and XXXXXXXXX is the phone number.
+      The area code is always composed of two digits while the phone number can be composed of 8 or 9 digits.
+    `
+  ]
+}
+```
+
+#### when it does not contains the destination field or the destination is null in start record
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "call record don't have destination"
+  ]
+}
+```
+
+#### when destination has not AAXXXXXXXX or AAXXXXXXXXX format
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    `
+      Call record has a wrong destination: ''<wrong_destination_here>'. 
+      The phone number format is AAXXXXXXXXX, where AA is the area code and XXXXXXXXX is the phone number.
+      The area code is always composed of two digits while the phone number can be composed of 8 or 9 digits.
+    `
+  ]
+}
+```
 
 ## Bills
 
