@@ -25,6 +25,14 @@ defmodule BillingProcessor.ResponseBuilder do
     end)
   end
 
+  defp mount_response_of_database_insertion_of([]) do
+    %{
+      consistent_records_quantity: 0,
+      database_inconsistent_records_quantity: 0,
+      failed_records_on_insert: []
+    }
+  end
+
   defp mount_response_of_database_insertion_of(call_records_inserted) do
     Enum.reduce(call_records_inserted, %{}, fn (with_this_call_record, response_of_processing) -> 
       response_of_processing

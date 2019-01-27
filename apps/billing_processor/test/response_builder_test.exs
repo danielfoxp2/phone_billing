@@ -15,8 +15,33 @@ defmodule BillingProcessor.ResponseBuilderTest do
       calls_inserted = [{:ok, %{}}, {:error, %{start_call: %{__struct__: :start_call}, end_call: %{__struct__: :end_call}}}]
       call_records = {calls_inserted, [create_start_call_detail_record(), create_end_call_detail_record(), create_start_call_detail_record(), create_end_call_detail_record()]}
       %{consistent_records_quantity: consistent_records_quantity} = ResponseBuilder.mount_processing_result(call_records)
+      number_of_call_records_in_a_consistent_call = 2
 
-      assert consistent_records_quantity == 2
+      assert consistent_records_quantity == number_of_call_records_in_a_consistent_call
+    end
+
+    test "should present zero success when there are no consistent records" do
+      calls_inserted = []
+      call_records = {calls_inserted, [create_start_call_detail_inconsistent_record(), create_end_call_detail_inconsistent_record()]}
+      %{consistent_records_quantity: consistent_records_quantity} = ResponseBuilder.mount_processing_result(call_records)
+
+      assert consistent_records_quantity == 0
+    end
+
+    test "should present zero database inconsistent records quantity when there are no consistent records" do
+      calls_inserted = []
+      call_records = {calls_inserted, [create_start_call_detail_inconsistent_record(), create_end_call_detail_inconsistent_record()]}
+      %{database_inconsistent_records_quantity: database_inconsistent_records_quantity} = ResponseBuilder.mount_processing_result(call_records)
+
+      assert database_inconsistent_records_quantity == 0
+    end
+
+    test "should present zero failed records on insert when there are no consistent records" do
+      calls_inserted = []
+      call_records = {calls_inserted, [create_start_call_detail_inconsistent_record(), create_end_call_detail_inconsistent_record()]}
+      %{failed_records_on_insert: failed_records_on_insert} = ResponseBuilder.mount_processing_result(call_records)
+
+      assert failed_records_on_insert == []
     end
 
     test "should present the quantity of inconsistent records as validation errors" do
