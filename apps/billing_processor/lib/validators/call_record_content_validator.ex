@@ -35,8 +35,8 @@ defmodule BillingProcessor.CallRecordContentValidator do
   end
 
   defp validate(%{"call_id" => call_id} = in_call_record, "call_id") when not is_nil(call_id) do
-    only_integer = ~r/^[0-9]+$/
-    validate_number_in(in_call_record, "call_id", call_id, only_integer)
+    when_it_is_invalid = is_integer(call_id) == false
+    Error.build(in_call_record, "call_id", when_it_is_invalid)
   end
 
   defp validate(%{"source" => source} = call_record, "source") when not is_nil(source) do
