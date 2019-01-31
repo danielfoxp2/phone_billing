@@ -226,7 +226,7 @@ The set o validation consists in:
 #### Validations of Content
 The content validation takes care of information domain and required fields.
 
-Below are described error messages for each content validation of call records:
+Below are described error messages for each content validation of call records.
 
 #### when it does not contains the id field or the id is null or empty
 
@@ -353,6 +353,90 @@ Below are described error messages for each content validation of call records:
       The phone number format is AAXXXXXXXXX, where AA is the area code and XXXXXXXXX is the phone number.
       The area code is always composed of two digits while the phone number can be composed of 8 or 9 digits.
     `
+  ]
+}
+```
+
+#### Validation of Duplicity
+
+The duplicity validation consists of two types: duplication on itens being inserted and duplication 
+with the itens already inserted. The target fields of these validations are: `id` and `call_id`.
+
+The Id must be uniq for each call record.
+
+The call_id need to be a pair of call records consisting in a call record of type `start` with a call_id number 
+and a call record of type `end` with the same call_id.
+
+Below are described error messages for each duplicity validation of call records.
+
+####  when there are duplicated call record id within call records to be persisted
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "call record with id: <duplicated_id_here> is duplicated in call records being inserted"
+  ]
+}
+```
+
+#### when already exists the same call record id persisted
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "call record with id: <duplicated_id_here> already exists in database"
+  ]
+}
+```
+
+#### when there are more than two call ids with the same value within call records to be persisted
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "call record with call_id: <duplicated_call_id_here> is duplicated in call records being inserted"
+  ]
+}
+```
+
+#### when already exists the same call record call_id persisted
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "call record with call_id: <duplicated_call_id_here> already exists in database"
+  ]
+}
+```
+
+#### Validation of call structure
+
+The call is a pair of a call record of type `start` and one of type `end` with the same call_id in both of them. 
+
+Below are described error messages for call structure validation.
+
+#### when a call has a call records pair with the same type
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "Inconsistent call for call_id <call_id_number_here>. A call is a composition of two record types, 'start' and 'end', with the same call id."
+  ]
+}
+```
+
+#### when a call has a call record without type value
+
+```javascript
+{
+  //[other fields of the invalid call record...]
+  "errors": [
+    "Inconsistent call for call_id <call_id_number_here>. A call is a composition of two record types, 'start' and 'end', with the same call id."
   ]
 }
 ```
