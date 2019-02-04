@@ -205,7 +205,7 @@ Field | Description
 ----- | -----------
 **received_records_quantity** | Represents the total quantity of call records received to be processed.
 **consistent_records_quantity** | Represents the total quantity of call records received that comply with the consistence call records rules.
-**inconsistent_records_quantity** | Represents the total quantity of call records received that not comply with the consistence call records rules.
+**inconsistent_records_quantity** | Represents the total quantity of call records received that do not comply with the consistence call records rules.
 **database_inconsistent_records_quantity** | Represents the total quantity of call records that has ids or call ids duplicated with call records from database.
 **failed_records_on_validation** | Represents the list of call records that has some inconsistence.
 **failed_records_on_insert** | Represents the list of call records that returned `{:error, reason}` on database insertion moment.
@@ -217,7 +217,7 @@ Before insert the call records, the application executes a set of validations to
 
 These validations also serves to inform the PhoneBilling caller why each refused call record is invalid.
 
-The set o validation consists in:
+The set of validation consists in:
 
 * Content;
 * Duplication;
@@ -365,7 +365,7 @@ with the itens already inserted. The target fields of these validations are: `id
 The Id must be uniq for each call record.
 
 The call_id need to be a pair of call records consisting in a call record of type `start` with a call_id number 
-and a call record of type `end` with the same call_id.
+and a call record of type `end` with the same call_id number.
 
 Below are described error messages for each duplicity validation of call records.
 
