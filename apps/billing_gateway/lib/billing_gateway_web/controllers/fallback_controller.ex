@@ -33,4 +33,9 @@ defmodule BillingGatewayWeb.FallbackController do
     |> render(BillingGatewayWeb.ErrorView, :"200", taxes_error: reason)
   end
 
+  def call(conn, {:error, :unset_taxes}) do
+    conn
+    |> render(BillingGatewayWeb.ErrorView, :"200", taxes_error: "Tariffs not found for informed reference")
+  end
+
 end

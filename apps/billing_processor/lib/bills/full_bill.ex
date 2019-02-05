@@ -1,6 +1,7 @@
 defmodule BillingProcessor.Bills.FullBill do
   alias BillingProcessor.Bills.BillDetails
 
+  def build(grouped_calls, %{}, bill_params), do: {:error, :unset_taxes}
   def build(grouped_calls, taxes, bill_params) do
     {:ok, mount_bill(grouped_calls, taxes, bill_params)}
   end
