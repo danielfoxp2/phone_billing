@@ -447,17 +447,108 @@ The client can request a telephone bill for a given reference. The system will g
 ### Request example
 
 ```bash
-$ curl localhost:4000/api/taxes \
-  -d taxes_params[reference_period]=01/2019 \
-  -d taxes_params[call_charge]=0.05 \
-  -d taxes_params[standing_charge]=0.09 
+$ curl -g "localhost:4000/api/bill?bill_params[phone_number]=62984680648&bill_params[reference_period]=01/2019"
 ```
 ### Arguments
+
+Field | Description
+----- | -----------
+**bill_params** | Object containing the data to be generate a bill.
+**phone_number** | Phone number that the bill will be generated for. Should have `AAXXXXXXXXX` format, where `AA` is the area code with two digits and `XXXXXXXXX` is the phone number with 8 or 9 digits.
+**reference_period** | Reference to generate bill based on calls of period. Should have `MM/YYYY` format.
 
 ### Responses example
 
 #### On Success
 
-#### On Validation Errors
+```javascript
+"bill": {
+        "reference_period": "11/2018",
+        "phone_number": "62984680648",
+        "bill": {
+            "bill_total": "R$ 1,76",
+            "bill_details": [
+                {
+                    "destination": 62111222333,
+                    "call_start_time": "13:15:44",
+                    "call_start_date": "15-11-2018",
+                    "call_price": "R$ 0,44",
+                    "call_duration": "0h07m30s"
+                },
+                {
+                    "destination": 62111222333,
+                    "call_start_time": "13:15:44",
+                    "call_start_date": "15-11-2018",
+                    "call_price": "R$ 0,44",
+                    "call_duration": "0h07m30s"
+                },
+                {
+                    "destination": 62111222333,
+                    "call_start_time": "13:15:44",
+                    "call_start_date": "15-11-2018",
+                    "call_price": "R$ 0,44",
+                    "call_duration": "0h07m30s"
+                },
+                {
+                    "destination": 62111222333,
+                    "call_start_time": "13:15:44",
+                    "call_start_date": "15-11-2018",
+                    "call_price": "R$ 0,44",
+                    "call_duration": "0h07m30s"
+                }
+            ]
+        }
+  }
 
+```
 
+### Validations
+Before create the bill, the application executes a set of validations to garantee that informed parameters are in the acceptable format. 
+
+The set of validation consists in:
+
+* Phone number;
+* Reference period;
+
+#### Validation of phone number
+
+#### when phone has not AAXXXXXXXX or AAXXXXXXXXX format
+
+```javascript
+{
+    "bill_creation_error": {
+        //[other fields...]
+        "errors": [
+            "The bill calculation was not executed because phone number is invalid or not informed"
+        ]
+    }
+}
+```
+
+#### Validation of reference period
+
+#### when reference has not MM/AAAA format
+
+```javascript
+{
+    "bill_creation_error": {
+        //[other fields...]
+        "errors": [
+            "The bill calculation was not executed because reference has not the valid format of MM/AAAA or has invalid month"
+        ]
+    }
+}
+```
+
+#### when reference month is not between 01 and 12
+
+```javascript
+{
+    "bill_creation_error": {
+        //[other fields...]
+        "errors": [
+            "The bill calculation was not executed because reference has not the valid format of MM/AAAA or has invalid month"
+        ]
+    }
+}
+```
