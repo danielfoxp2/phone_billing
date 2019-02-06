@@ -174,6 +174,10 @@ Field | Description
 **postback_url** | The URL that PhoneBilling will call to send the result of processing the call records informed.
 **call_records** | A list of call records to be persisted.
 
+### Tip
+
+If don't have your own postback url then you can use the webhook service. Go to the page https://webhook.site/ create a new url and use it as your postback url. Doing so you will be able to see the response of call records service.
+
 ### Response example
 
 The call records insert processing is done asynchronously, because of it the response is split in two phases:
