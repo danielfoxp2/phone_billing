@@ -8,7 +8,7 @@ defmodule BillingProcessor.Bills.BillReference do
     put_last_reference_in(params, current_reference)
   end
 
-  def get_last_month_if_needed(%{"reference_period" => reference_period} = params, current_reference), do: params
+  def get_last_month_if_needed(%{"reference_period" => _reference_period} = params, _current_reference), do: params
   def get_last_month_if_needed(params, current_reference), do: put_last_reference_in(params, current_reference)
 
   defp put_last_reference_in(params, current_reference) do

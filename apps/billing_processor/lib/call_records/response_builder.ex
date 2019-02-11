@@ -54,10 +54,10 @@ defmodule BillingProcessor.ResponseBuilder do
 
   defp get({:increment, :all_call_records}), do: 1
   defp get({:increment, {:inserted_in_database, {:ok, _not_used}}}), do: 2
-  defp get({:increment, %{"errors" => errors}}), do: 1
+  defp get({:increment, %{"errors" => _errors}}), do: 1
   defp get({:increment, {:error, _not_used}}), do: 2
   defp get({:increment, _call_record_without_errors}), do: 0
-  defp get({:aggregate, %{"errors" => errors} = call_record}), do: [call_record]
+  defp get({:aggregate, %{"errors" => _errors} = call_record}), do: [call_record]
   defp get({:aggregate, {:error, call}}), do: get_call_records_from(call)
   defp get({:aggregate, _call_record_without_errors}), do: []
 

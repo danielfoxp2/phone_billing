@@ -83,7 +83,7 @@ defmodule BillingProcessor.TaxesReferenceValidatorTest do
 
   defp get_next_reference_based_on_current_month() do
     actual_date = Date.utc_today()
-    next_date = Date.add(actual_date, 31)
+    Date.add(actual_date, 31)
   end
 
 end
