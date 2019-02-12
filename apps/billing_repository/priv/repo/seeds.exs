@@ -84,4 +84,10 @@ BillingRepository.Repo.insert!(prod_end_call_record_example_seven)
 BillingRepository.Repo.insert!(prod_start_call_record_example_eight)
 BillingRepository.Repo.insert!(prod_end_call_record_example_eight)
 
+BillingRepository.Repo.query!("insert into tariffs (reference, standing_charge, call_charge) values(201602, 0.36, 0.09)")
+
+BillingRepository.Repo.query!("insert into tariffs (reference, standing_charge, call_charge) values(201712, 0.36, 0.09)")
+
+BillingRepository.Repo.query!("insert into tariffs (reference, standing_charge, call_charge) values(201802, 0.36, 0.09)")
+
 BillingRepository.Repo.query!("insert into tariffs (reference, standing_charge, call_charge) values(201811, 0.36, 0.09)")
