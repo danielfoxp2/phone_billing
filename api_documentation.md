@@ -10,7 +10,7 @@ This resources allow the client of API to define taxes for a reference to charge
 ### Request example
 
 ```bash
-$ curl localhost:4000/api/taxes \
+$ curl peaceful-coast-39242.herokuapp.com/api/taxes \
   -H "Content-Type: application/json" \
   -d '{"taxes_params": { "reference_period": "01/2019", "call_charge": "0.05", "standing_charge": "0.09" }}' 
 ```
@@ -162,7 +162,7 @@ The call records resource is intended to be called to save call records. It will
 ```
 
 ```bash
-$ curl localhost:4000/api/call_records \
+$ curl peaceful-coast-39242.herokuapp.com/api/call_records \
   -H "Content-Type: application/json" \
   -d @call_records_example.json
 ```
@@ -451,7 +451,7 @@ The client can request a telephone bill for a given reference. The system will g
 ### Request example
 
 ```bash
-$ curl -g "localhost:4000/api/bill?bill_params[phone_number]=62984680648&bill_params[reference_period]=01/2019"
+$ curl -g "peaceful-coast-39242.herokuapp.com/api/bill?bill_params[phone_number]=62984680648&bill_params[reference_period]=01/2019"
 ```
 ### Arguments
 
