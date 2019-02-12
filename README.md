@@ -24,11 +24,6 @@ It contains all the business rules to process calls and create bills.
 
 An Elixir application with the purpose of persist to and recover from database the telephone calls data. It is the infrastructure layer of Domain Driven Design.
 
-
-Fazer diagrama 
-Colocar instruções de instalação e testes
-Ambiente usado para executar projeto Computer/operating system, text editor/IDE, libraries, etc).
-
 ## Installing and testing instructions
 
 ### Dependencies
@@ -77,8 +72,6 @@ In the root directory of umbrella
 
 `$ cd apps/billing_processor`
 `$ mix test`
-
-Falar que tem url no Heroku
 
 ## Environment used to run this project
 
