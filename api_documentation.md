@@ -446,7 +446,11 @@ Below are described error messages for call structure validation.
 ```
 
 ## Bills
-The client can request a telephone bill for a given reference. The system will get all call records for the given reference and will calculate the value of each call and the value of the bill itself, using the configured taxes to do so. The client should inform a phone number and (optionally) a reference for calculate the bill. If no reference is informed, the system will get the last closed reference to perform the calculation. The system only calculates if the given reference is a closed month. The current month never gets calculated because its is not closed.
+The client can request a telephone bill for a given reference. The system will get all call records for the given reference and will calculate the value of each call and the value of the bill itself, using the configured taxes to do so. The client should inform a phone number and (optionally) a reference for calculate the bill. If no reference is informed, the system will get the last closed reference to perform the calculation. The system only calculates if the given reference is a closed month. The current month never gets calculated because its is not closed. 
+
+```
+Obs.: When bill creation is finished the used taxes of the processed reference are inserted to the next reference. This happens because when the next reference will be processed it will have configured taxes.
+```
 
 ### Request example
 
