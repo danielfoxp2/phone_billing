@@ -56,6 +56,15 @@ defmodule BillingProcessor.ChargedMinutesTest do
     end
   end
 
+  describe "olist" do
+    test "should return only accountable minutes of each day" do
+      call = get_a_call_starting_21_57_13_pm_and_ending_22_10_56_am_of_the_next_day()
+      expected_result = 962
+
+      assert ChargedMinutes.from(call) == expected_result
+    end
+  end
+
   describe "charged minutes from call when call traverse multiples days" do
     test "should return only accountable minutes of each traversed day" do
       call = get_a_call_starting_9_pm_of_one_day_and_ending_11_am_five_days_later()
@@ -104,6 +113,13 @@ defmodule BillingProcessor.ChargedMinutesTest do
     [
       %{type: "start", call_id: 1, timestamp: get_date_time("2018-10-31T21:50:00Z")},
       %{type: "end", call_id: 1, timestamp: get_date_time("2018-11-01T08:10:05Z")}
+    ]
+  end
+
+  defp get_a_call_starting_21_57_13_pm_and_ending_22_10_56_am_of_the_next_day do
+    [
+      %{type: "start", call_id: 1, timestamp: get_date_time("2017-12-13T21:57:13Z")},
+      %{type: "end", call_id: 1, timestamp: get_date_time("2017-12-14T22:10:56Z")}
     ]
   end
 

@@ -3,8 +3,25 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
 
   def from(call) do
     call
+    |> outro_metodo
     |> get_how_much_days_in()
     |> calculate_accountable_minutes_for()
+  end
+
+  defp outro_metodo([%{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}]) do
+    six_am = "06"
+    new_possible_start_record_timestamp = generate(six_am, start_record_timestamp)
+
+    start_date = DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
+    |> return_start_time_for_this(start_record_timestamp, new_possible_start_record_timestamp)
+
+    ten_pm = "22"
+    new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
+
+    end_date = DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
+    |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
+
+    [%{timestamp: start_date}, %{timestamp: end_date}]
   end
 
   defp get_how_much_days_in([%{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}] = call) do
@@ -55,7 +72,7 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
 
     minutos_do_segundo_dia = montar_call_com_6_am_como_start_e_end_record_timestamp(end_record_timestamp)
     |> calcular_minutos
-
+    
     minutos_do_primeiro_dia + minutos_do_segundo_dia
   end
 
