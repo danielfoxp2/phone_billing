@@ -56,7 +56,7 @@ defmodule BillingProcessor.ChargedMinutesTest do
     end
   end
 
-  describe "olist" do
+  describe "charged minutes from call when call starts before 22:00:00 in one day and ends after 22:00:00 of the next day" do
     test "should return only accountable minutes of each day" do
       call = get_a_call_starting_21_57_13_pm_and_ending_22_10_56_am_of_the_next_day()
       expected_result = 962
