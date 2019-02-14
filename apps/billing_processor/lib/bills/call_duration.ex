@@ -11,7 +11,13 @@ defmodule BillingProcessor.Bills.CallDuration do
     DateTime.diff(end_record.timestamp, start_record.timestamp) 
   end
 
-  defp get_time(seconds), do: Time.add(~T[00:00:00], seconds)
+  defp get_time(seconds) when seconds < 86400, do: Time.add(~T[00:00:00], seconds)
+  defp get_time(seconds) do
+    minutes_and_seconds = Time.add(~T[00:00:00], seconds)
+    hours =  Integer.floor_div(seconds, 86400) * 24
+
+    %{hour: hours, minute: minutes_and_seconds.minute, second: minutes_and_seconds.second}
+  end
 
   defp get_result_from(time) do
     %{

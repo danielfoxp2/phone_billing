@@ -2,7 +2,7 @@ defmodule BillingProcessor.CallDurationTest do
   use ExUnit.Case
   alias BillingProcessor.Bills.CallDuration
 
-  describe "A duration of call" do
+  describe "A duration of call when it is less than 24 hours" do
     test "should calculate the seconds quantity" do
       call = get_call()
 
@@ -37,8 +37,16 @@ defmodule BillingProcessor.CallDurationTest do
 
       assert CallDuration.of(call) == expected_result
     end
+  end
 
+  describe "A duration of call when it is bigger than 24 hours" do
+    test "should calculate the complete duration" do
+      call = get_call_with_24_hours_and_13_minutes_43_seconds()
 
+      expected_result = %{hours: 24, minutes: 13, seconds: 43}
+
+      assert CallDuration.of(call) == expected_result
+    end
   end
 
   defp get_call() do
@@ -54,6 +62,13 @@ defmodule BillingProcessor.CallDurationTest do
       %{type: "end", call_id: 2, timestamp: get_date_time("2018-10-31T22:35:25Z")}
     ]
   end
+
+  defp get_call_with_24_hours_and_13_minutes_43_seconds() do
+    [
+      %{type: "start", call_id: 2, timestamp: get_date_time("2017-12-13T21:57:13Z")},
+      %{type: "end", call_id: 2, timestamp: get_date_time("2017-12-14T22:10:56Z")}
+    ]
+  end 
 
   defp get_date_time(date) do
     {:ok, converted_date, 0} = DateTime.from_iso8601(date)
