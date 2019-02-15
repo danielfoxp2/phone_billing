@@ -9,15 +9,8 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
   end
 
   defp adjust_timestamp_call_to_charged_period([%{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}]) do
-   
     start_date = adjusted_start_timestamp(start_record_timestamp)
-
-
-    ten_pm = "22"
-    new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
-
-    end_date = DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
-    |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
+    end_date = adjusted_end_timestamp(end_record_timestamp)
 
     [%{timestamp: start_date}, %{timestamp: end_date}]
   end
@@ -28,6 +21,14 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
 
     start_date = DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
     |> return_start_time_for_this(start_record_timestamp, new_possible_start_record_timestamp)
+  end
+
+  defp adjusted_end_timestamp(end_record_timestamp) do
+    ten_pm = "22"
+    new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
+
+    end_date = DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
+    |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
   end
 
   defp get_how_much_days_in([%{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}] = call) do
@@ -106,29 +107,17 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
   end
 
   defp adjust_end_time_limit([%{days: 1}, start_record, %{timestamp: end_record_timestamp}]) do
-    ten_pm = "22"
-    new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
-
-    DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
-    |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
+    adjusted_end_timestamp(end_record_timestamp)
     |> mount_end_result(start_record)
   end
 
   defp adjust_end_time_limit([%{days: 2}, start_record, %{timestamp: end_record_timestamp}]) do
-    ten_pm = "22"
-    new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
-
-    DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
-    |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
+    adjusted_end_timestamp(end_record_timestamp)
     |> mount_end_result(start_record)
   end
 
   defp adjust_end_time_limit([_dont_matter, start_record, %{timestamp: end_record_timestamp}]) do
-    ten_pm = "22"
-    new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
-
-    DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
-    |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
+    adjusted_end_timestamp(end_record_timestamp)
     |> mount_end_result(start_record)
   end
 
