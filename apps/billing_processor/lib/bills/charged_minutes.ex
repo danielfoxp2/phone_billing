@@ -3,17 +3,15 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
 
   def from(call) do
     call
-    |> outro_metodo
+    |> adjust_timestamp_call_to_charged_period
     |> get_how_much_days_in()
     |> calculate_accountable_minutes_for()
   end
 
-  defp outro_metodo([%{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}]) do
-    six_am = "06"
-    new_possible_start_record_timestamp = generate(six_am, start_record_timestamp)
+  defp adjust_timestamp_call_to_charged_period([%{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}]) do
+   
+    start_date = adjusted_start_timestamp(start_record_timestamp)
 
-    start_date = DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
-    |> return_start_time_for_this(start_record_timestamp, new_possible_start_record_timestamp)
 
     ten_pm = "22"
     new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
@@ -22,6 +20,14 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
 
     [%{timestamp: start_date}, %{timestamp: end_date}]
+  end
+
+  defp adjusted_start_timestamp(start_record_timestamp) do
+    six_am = "06"
+    new_possible_start_record_timestamp = generate(six_am, start_record_timestamp)
+
+    start_date = DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
+    |> return_start_time_for_this(start_record_timestamp, new_possible_start_record_timestamp)
   end
 
   defp get_how_much_days_in([%{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}] = call) do
@@ -58,11 +64,7 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
   end
 
   defp adjust_start_time_limit([%{days: 1} = days, %{timestamp: start_record_timestamp}, end_record]) do
-    six_am = "06"
-    new_possible_start_record_timestamp = generate(six_am, start_record_timestamp)
-
-    DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
-    |> return_start_time_for_this(start_record_timestamp, new_possible_start_record_timestamp)
+    adjusted_start_timestamp(start_record_timestamp)
     |> mount_start_result(end_record, days)
   end
 
@@ -99,11 +101,7 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
   end
 
   defp adjust_start_time_limit([days, %{timestamp: start_record_timestamp}, end_record]) do
-    six_am = "06"
-    new_possible_start_record_timestamp = generate(six_am, start_record_timestamp)
-
-    DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
-    |> return_start_time_for_this(start_record_timestamp, new_possible_start_record_timestamp)
+    adjusted_start_timestamp(start_record_timestamp)
     |> mount_start_result(end_record, days)
   end
 
