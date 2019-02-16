@@ -1,6 +1,7 @@
 defmodule BillingGatewayWeb.UserSocket do
   use Phoenix.Socket
-
+  @moduledoc false
+  
   ## Channels
   # channel "room:*", BillingGatewayWeb.RoomChannel
 
