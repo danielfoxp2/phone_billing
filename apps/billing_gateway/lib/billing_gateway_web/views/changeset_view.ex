@@ -1,12 +1,8 @@
 defmodule BillingGatewayWeb.ChangesetView do
   use BillingGatewayWeb, :view
 
-  @doc """
-  Traverses and translates changeset errors.
-
-  See `Ecto.Changeset.traverse_errors/2` and
-  `BillingGatewayWeb.ErrorHelpers.translate_error/1` for more details.
-  """
+  @moduledoc false
+  
   def translate_errors(changeset) do
     Ecto.Changeset.traverse_errors(changeset, &translate_error/1)
   end

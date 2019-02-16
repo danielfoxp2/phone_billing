@@ -2,6 +2,8 @@ defmodule BillingGatewayWeb.CallRecordView do
   use BillingGatewayWeb, :view
   alias BillingGatewayWeb.CallRecordView
 
+  @moduledoc false
+  
   def render("index.json", %{call_records: call_records}) do
     %{data: render_many(call_records, CallRecordView, "call_record.json")}
   end

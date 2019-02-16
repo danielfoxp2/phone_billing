@@ -1,6 +1,8 @@
 defmodule BillingGatewayWeb.ErrorView do
   use BillingGatewayWeb, :view
-
+  
+  @moduledoc false
+  
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.
   def render("200.json", %{postback_url_error_message: error_message}) do

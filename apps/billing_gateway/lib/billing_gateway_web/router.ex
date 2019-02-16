@@ -1,6 +1,8 @@
 defmodule BillingGatewayWeb.Router do
   use BillingGatewayWeb, :router
-
+  
+  @moduledoc false
+  
   pipeline :api do
     plug :accepts, ["json"]
   end
