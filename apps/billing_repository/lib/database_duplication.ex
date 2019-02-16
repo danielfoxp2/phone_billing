@@ -2,6 +2,19 @@ defmodule BillingRepository.DatabaseDuplication do
   alias BillingRepository.Repo
   use Task
 
+  @doc """
+  Get the duplicated call records based on id and call id.
+
+  ## Parameters
+
+    A list with of call records
+
+  ## Examples without duplication
+
+      iex> call_records = [%{ "id" => "1", "call_id" => "1", "type" => "start" }, %{ "id" => "2", "call_id" => "1", "type" => "end" }]
+      iex> DatabaseDuplication.search_for(call_records)
+      {[], [%{ "id" => "1", "call_id" => "1", "type" => "start" }, %{ "id" => "2", "call_id" => "1", "type" => "end" }]}
+  """
   def search_for(call_records) do
     duplicated_call_records_found = search_in_parallel_for_duplicated(call_records)
     {duplicated_call_records_found, call_records}
