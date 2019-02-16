@@ -2,7 +2,7 @@ defmodule BillingRepository.Bills.TariffRepository do
   alias BillingRepository.Repo
 
   @moduledoc """
-  Responsible for manage taxes that will be used in bill calculation
+  Responsible for manage the persistence of taxes that will be used in bill calculation
   """
 
 
@@ -52,7 +52,7 @@ defmodule BillingRepository.Bills.TariffRepository do
   Insert taxes for the given reference.
   
   ## Parameters
-  
+
     A map with the following structure:
 
     - reference_period: A String in the format `"MM/yyyy"`.
