@@ -3,6 +3,19 @@ defmodule BillingGateway.Taxes do
   alias BillingProcessor.TaxesReferenceValidator
   alias BillingProcessor.TaxesValidator
 
+  @moduledoc """
+    Assure execution of taxes business before calling its insertion.
+  """
+
+  @doc """
+  Call validation of taxes, reference period and if everything is right call the responsible to persist taxes. 
+
+  ## Examples
+
+      iex> taxes_params = %{"reference_period" => "11/2018", "standing_charge" => "0.05", "call_charge" => "0.14"}
+      iex> Taxes.create(taxes_params)
+      {:ok, "Taxes inserted"}
+  """
   def create(taxes_params) do
     taxes_params
     |> TaxesValidator.validate()
