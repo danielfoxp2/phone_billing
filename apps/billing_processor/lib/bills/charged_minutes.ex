@@ -79,16 +79,20 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
   end
 
   defp adjust_start_time_limit([%{days: 2}, %{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}]) do
-    minutos_do_primeiro_dia = montar_call_com_start_record_e_10_pm_como_end_record(start_record_timestamp)
-    |> calcular_minutos
-
-    minutos_do_segundo_dia = montar_call_com_6_am_como_start_e_end_record_timestamp(end_record_timestamp)
-    |> calcular_minutos
-    
-    minutos_do_primeiro_dia + minutos_do_segundo_dia
+    calculate_minutes_of_first_day_using(start_record_timestamp) + calculate_minutes_of_last_day_using(end_record_timestamp)
   end
 
-  defp montar_call_com_start_record_e_10_pm_como_end_record(start_record_timestamp) do
+  defp calculate_minutes_of_first_day_using(start_record_timestamp) do
+    mount_a_end_record_as_10_pm_grouping_it_with(start_record_timestamp)
+    |> calculate_charged_minutes_of_call
+  end
+
+  defp calculate_minutes_of_last_day_using(end_record_timestamp) do
+    mount_a_start_record_as_6_am_grouping_it_with(end_record_timestamp)
+    |> calculate_charged_minutes_of_call
+  end
+
+  defp mount_a_end_record_as_10_pm_grouping_it_with(start_record_timestamp) do
     ten_pm = "22"
     end_record_of_start_day = generate(ten_pm, start_record_timestamp)
     days = %{days: 1}
@@ -96,7 +100,7 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     adjust_start_time_limit(first_day)
   end
 
-  defp montar_call_com_6_am_como_start_e_end_record_timestamp(end_record_timestamp) do
+  defp mount_a_start_record_as_6_am_grouping_it_with(end_record_timestamp) do
     six_am = "06"
     start_record_of_end_day = generate(six_am, end_record_timestamp)
     days = %{days: 1}
@@ -104,7 +108,7 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     adjust_start_time_limit(last_day)
   end
 
-  defp calcular_minutos([_days | call_records_timestamps ]) do
+  defp calculate_charged_minutes_of_call([_days | call_records_timestamps]) do
     call_records_timestamps
     |> get_duration_in_seconds()
     |> get_only_accountable_call_minutes()
