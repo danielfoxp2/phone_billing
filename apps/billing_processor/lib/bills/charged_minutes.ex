@@ -52,7 +52,6 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
 
   defp mount_duration_for(call_duration_in_days, call), do: [%{days: call_duration_in_days} | call]
     
-  defp calculate_accountable_minutes_for([%{days: 2}, _, _] = call), do: adjust_start_time_limit(call)
   defp calculate_accountable_minutes_for([%{days: 1}, _, _] = call) do
     call
     |> adjust_start_time_limit()
@@ -77,9 +76,9 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     calculate_minutes_of_first_day_using(start_record_timestamp) + calculate_minutes_of_last_day_using(end_record_timestamp)
   end
 
-  defp adjust_start_time_limit([days, %{timestamp: start_record_timestamp}, end_record]) do
+  defp adjust_start_time_limit([_days, %{timestamp: start_record_timestamp}, end_record]) do
     adjusted_start_timestamp(start_record_timestamp)
-    |> mount_start_result(end_record, days)
+    |> mount_start_result(end_record)
   end
 
   defp calculate_minutes_of_first_day_using(start_record_timestamp) do
@@ -108,13 +107,13 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     adjust_start_time_limit(last_day)
   end
 
-  defp calculate_charged_minutes_of_call([_days | call_records_timestamps]) do
+  defp calculate_charged_minutes_of_call(call_records_timestamps) do
     call_records_timestamps
     |> get_duration_in_seconds()
     |> get_only_accountable_call_minutes()
   end
 
-  defp adjust_end_time_limit([_dont_matter, start_record, %{timestamp: end_record_timestamp}]) do
+  defp adjust_end_time_limit([start_record, %{timestamp: end_record_timestamp}]) do
     adjusted_end_timestamp(end_record_timestamp)
     |> mount_end_result(start_record)
   end
@@ -141,8 +140,8 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
   defp return_end_time_for_this(:lt, end_record_timestamp, _ten_pm), do: end_record_timestamp
   defp return_end_time_for_this(_equal_or_greater_result, _end_record_timestamp, ten_pm), do: ten_pm
 
-  defp mount_start_result(start_record_timestamp, end_record, days_in_call) do
-    [days_in_call, %{timestamp: start_record_timestamp}, end_record]
+  defp mount_start_result(start_record_timestamp, end_record) do
+    [%{timestamp: start_record_timestamp}, end_record]
   end
 
   defp mount_end_result(end_record_timestamp, start_record) do
