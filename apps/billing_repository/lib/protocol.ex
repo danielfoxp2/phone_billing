@@ -6,7 +6,7 @@ defmodule BillingRepository.Protocol do
     |> get_number
   end
 
-  def get_number(%Postgrex.Result{rows: rows}) do
+  defp get_number(%Postgrex.Result{rows: rows}) do
     rows
     |> Enum.flat_map(fn row -> row end)
     |> List.first
