@@ -19,7 +19,9 @@ defmodule BillingProcessor.Bills.BillReference do
 
   defp get_last_reference_from(current_reference) do
     previous_date = Date.add(current_reference, -31)
-    "#{previous_date.month}/#{previous_date.year}"
+    month = "#{previous_date.month}"
+    year = previous_date.year
+    "#{String.pad_leading(month, 2, "0")}/#{year}"
   end
 
   defp update_reference_of(last_reference, params), do: Map.put(params, "reference_period", last_reference)
