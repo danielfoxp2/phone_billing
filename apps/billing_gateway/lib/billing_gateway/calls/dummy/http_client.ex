@@ -1,5 +1,6 @@
 defmodule BillingGateway.Dummy.HttpClient do
-
+  @moduledoc false
+  
   def post(_postback_url, call_records_process_result, _headers) do
     call_records_process_result
     |> Poison.decode
