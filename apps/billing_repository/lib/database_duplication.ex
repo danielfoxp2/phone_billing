@@ -1,6 +1,5 @@
 defmodule BillingRepository.DatabaseDuplication do
   alias BillingRepository.Repo
-  use Task
 
   @moduledoc """
   Responsible for search duplicated call records that already exists persisted based on a list of given call records
