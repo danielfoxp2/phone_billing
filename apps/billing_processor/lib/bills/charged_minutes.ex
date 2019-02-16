@@ -73,13 +73,13 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     accountable_minutes_of_full_days + accountable_minutes_of_first_and_last_day
   end
 
-  defp adjust_start_time_limit([%{days: 1} = days, %{timestamp: start_record_timestamp}, end_record]) do
-    adjusted_start_timestamp(start_record_timestamp)
-    |> mount_start_result(end_record, days)
-  end
-
   defp adjust_start_time_limit([%{days: 2}, %{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}]) do
     calculate_minutes_of_first_day_using(start_record_timestamp) + calculate_minutes_of_last_day_using(end_record_timestamp)
+  end
+
+  defp adjust_start_time_limit([days, %{timestamp: start_record_timestamp}, end_record]) do
+    adjusted_start_timestamp(start_record_timestamp)
+    |> mount_start_result(end_record, days)
   end
 
   defp calculate_minutes_of_first_day_using(start_record_timestamp) do
@@ -112,11 +112,6 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     call_records_timestamps
     |> get_duration_in_seconds()
     |> get_only_accountable_call_minutes()
-  end
-
-  defp adjust_start_time_limit([days, %{timestamp: start_record_timestamp}, end_record]) do
-    adjusted_start_timestamp(start_record_timestamp)
-    |> mount_start_result(end_record, days)
   end
 
   defp adjust_end_time_limit([_dont_matter, start_record, %{timestamp: end_record_timestamp}]) do
