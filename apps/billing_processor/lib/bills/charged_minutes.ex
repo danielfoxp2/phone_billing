@@ -1,6 +1,8 @@
 defmodule BillingProcessor.Bills.ChargedMinutes do
   alias BillingProcessor.Bills.BillDetailsFormatter
 
+  @one_minute_as_seconds 60
+
   def from(call) do
     call
     |> adjust_timestamp_call_to_charged_period()
@@ -139,10 +141,9 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     DateTime.diff(end_record.timestamp, start_record.timestamp) 
   end
 
-  defp get_only_accountable_call_minutes(from_call_duration_in_seconds) when from_call_duration_in_seconds < 60, do: 0
+  defp get_only_accountable_call_minutes(from_call_duration_in_seconds) when from_call_duration_in_seconds < @one_minute_as_seconds, do: 0
   defp get_only_accountable_call_minutes(from_call_duration_in_seconds) do
-    one_minute = 60
-    Integer.floor_div(from_call_duration_in_seconds, one_minute)
+    Integer.floor_div(from_call_duration_in_seconds, @one_minute_as_seconds)
   end
 
   defp return_start_time_for_this(:lt, _start_record_timestamp, six_am), do: six_am
