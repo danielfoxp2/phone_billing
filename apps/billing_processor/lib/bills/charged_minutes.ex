@@ -18,22 +18,6 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     [%{timestamp: start_date}, %{timestamp: end_date}]
   end
 
-  defp adjusted_start_timestamp(start_record_timestamp) do
-    six_am = "06"
-    new_possible_start_record_timestamp = generate(six_am, start_record_timestamp)
-
-    DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
-    |> return_start_time_for_this(start_record_timestamp, new_possible_start_record_timestamp)
-  end
-
-  defp adjusted_end_timestamp(end_record_timestamp) do
-    ten_pm = "22"
-    new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
-
-    DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
-    |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
-  end
-
   defp calculate_accountable_minutes_for([%{days: 1}, _, _] = call) do
     call
     |> adjust_start_time_limit()
@@ -54,6 +38,22 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     accountable_minutes_of_full_days + accountable_minutes_of_first_and_last_day
   end
 
+  defp adjusted_start_timestamp(start_record_timestamp) do
+    six_am = "06"
+    new_possible_start_record_timestamp = generate(six_am, start_record_timestamp)
+
+    DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
+    |> return_start_time_for_this(start_record_timestamp, new_possible_start_record_timestamp)
+  end
+
+  defp adjusted_end_timestamp(end_record_timestamp) do
+    ten_pm = "22"
+    new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
+
+    DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
+    |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
+  end
+
   defp adjust_start_time_limit([%{days: 2}, %{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}]) do
     calculate_minutes_of_first_day_using(start_record_timestamp) + calculate_minutes_of_last_day_using(end_record_timestamp)
   end
@@ -61,6 +61,20 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
   defp adjust_start_time_limit([_days, %{timestamp: start_record_timestamp}, end_record]) do
     adjusted_start_timestamp(start_record_timestamp)
     |> mount_start_result(end_record)
+  end
+
+  defp adjust_end_time_limit([start_record, %{timestamp: end_record_timestamp}]) do
+    adjusted_end_timestamp(end_record_timestamp)
+    |> mount_end_result(start_record)
+  end
+
+  defp get_duration_in_seconds([start_record, end_record]) do
+    DateTime.diff(end_record.timestamp, start_record.timestamp) 
+  end
+
+  defp get_only_accountable_call_minutes(from_call_duration_in_seconds) when from_call_duration_in_seconds < @one_minute_as_seconds, do: 0
+  defp get_only_accountable_call_minutes(from_call_duration_in_seconds) do
+    Integer.floor_div(from_call_duration_in_seconds, @one_minute_as_seconds)
   end
 
   defp calculate_minutes_of_first_day_using(start_record_timestamp) do
@@ -95,25 +109,11 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     |> get_only_accountable_call_minutes()
   end
 
-  defp adjust_end_time_limit([start_record, %{timestamp: end_record_timestamp}]) do
-    adjusted_end_timestamp(end_record_timestamp)
-    |> mount_end_result(start_record)
-  end
-
   defp generate(hour, date) do
     date_as_iso = "#{BillDetailsFormatter.format(date, :date_y_m_d)}T#{hour}:00:00Z"
     {:ok, converted_date, 0} = DateTime.from_iso8601(date_as_iso)
     
     converted_date
-  end
-
-  defp get_duration_in_seconds([start_record, end_record]) do
-    DateTime.diff(end_record.timestamp, start_record.timestamp) 
-  end
-
-  defp get_only_accountable_call_minutes(from_call_duration_in_seconds) when from_call_duration_in_seconds < @one_minute_as_seconds, do: 0
-  defp get_only_accountable_call_minutes(from_call_duration_in_seconds) do
-    Integer.floor_div(from_call_duration_in_seconds, @one_minute_as_seconds)
   end
 
   defp return_start_time_for_this(:lt, _start_record_timestamp, six_am), do: six_am
