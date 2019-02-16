@@ -4,7 +4,14 @@ defmodule BillingGatewayWeb.BillController do
   alias BillingGateway.Bills
 
   action_fallback BillingGatewayWeb.FallbackController
+  
+  @moduledoc """
+    Represent the entry point of bill calculation API
+  """
 
+  @doc """
+    Represent the entry point of bill calculation API
+  """
   def calculate(conn, %{"bill_params" => bill_params}) do
     with {:ok, bill} <- Bills.calculate(bill_params) do
       conn
