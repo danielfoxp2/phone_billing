@@ -3,6 +3,45 @@ defmodule BillingProcessor.Bills.BillDetails do
   alias BillingProcessor.Bills.Callculator
   alias BillingProcessor.Bills.BillDetailsFormatter
 
+  @moduledoc """
+  Build details of a bill with the given calls
+  """
+
+  @doc """
+  From the given tuple with grouped calls and the charged tariffs it will mount the information of calls in the bill
+
+  ## Parameters
+    
+    A tuple with:
+
+    - grouped_calls: a map with a list of `call_records` grouped by `call_id`. Each grouped call_records contains a start and end record in a list.
+    - taxes: a map with the billed tariffs. 
+
+  ## Examples
+
+      iex> start_and_end_call_records = [
+      >   %{type: "start", call_id: 1, destination: 6298457834, timestamp: get_date_time("2018-10-25T21:50:00Z")},
+      >   %{type: "end", call_id: 1, timestamp: get_date_time("2018-10-25T22:10:00Z")}
+      > ]
+      
+      iex> grouped_calls = %{ 1 => start_and_end_call_records }
+      iex> taxes = %{standing_charge: 0.36, call_charge: 0.50}
+      
+      iex> BillDetails.build({grouped_calls, taxes})
+      %{
+        bill_total: "R$ 5,36", 
+        bill_details: [
+          %{
+            destination: 6298457834,
+            call_start_date: "25-10-2018",
+            call_start_time: "21:50:00",
+            call_duration: "0h20m00s",
+            call_price: "R$ 5,36"
+          }
+        ]
+      }
+  
+  """
   def build({grouped_calls, taxes}) do
     grouped_calls
     |> get_all_calls()
