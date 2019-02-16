@@ -19,9 +19,12 @@ defmodule BillingProcessor.Bills.BillDetails do
 
   ## Examples
 
+      iex> {:ok, start_record_timestamp, 0} = DateTime.from_iso8601("2018-10-25T21:50:00Z")
+      iex> {:ok, end_record_timestamp, 0} = DateTime.from_iso8601("2018-10-25T22:10:00Z")
+      
       iex> start_and_end_call_records = [
-      >   %{type: "start", call_id: 1, destination: 6298457834, timestamp: get_date_time("2018-10-25T21:50:00Z")},
-      >   %{type: "end", call_id: 1, timestamp: get_date_time("2018-10-25T22:10:00Z")}
+      >   %{type: "start", call_id: 1, destination: 6298457834, timestamp: start_record_timestamp},
+      >   %{type: "end", call_id: 1, timestamp: end_record_timestamp}
       > ]
       
       iex> grouped_calls = %{ 1 => start_and_end_call_records }
