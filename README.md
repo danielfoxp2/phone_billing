@@ -73,6 +73,16 @@ In the root directory of umbrella
 `$ cd apps/billing_processor`
 `$ mix test`
 
+### Generating docs
+
+It was used Exdoc to export the docs as HTML. To generate the docs in the umbrella root folder run the following:
+
+`$ mix docs`
+
+Then Exdoc will create a doc folder in the umbrella root folder with all docs created. Open with your browser the index.html that is the docs entrypoint.
+
+The most important links in the docs are the **PhoneBilling** (readme.html), and the **PhoneBilling API Documentation** (api_documentation.html).
+
 ## Environment used to run this project
 
 ### Computer
@@ -82,6 +92,12 @@ In the root directory of umbrella
 * Visual Studio Code with vscode-elixir plugin.
 * DBeaver 5.3.4
 * Heroku CLI 7.16.6
+
+## Side notes
+
+The applications billing_gateway and billing_repository were fully documented but the billing_processor has only some modules documented. This was done on purpose.
+
+It was done this way to provide an example of a code without formal documentation that uses the specification (tests), modules interfaces and functions implementations as its own documentation, following the self-documented code practice.
 
 
 
