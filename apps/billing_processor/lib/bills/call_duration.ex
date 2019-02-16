@@ -1,5 +1,7 @@
 defmodule BillingProcessor.Bills.CallDuration do
   
+  @moduledoc false
+  
   @seconds_in_days 86400
   @hours_in_day 24
 

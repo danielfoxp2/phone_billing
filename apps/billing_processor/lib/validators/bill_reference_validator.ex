@@ -1,5 +1,7 @@
 defmodule BillingProcessor.BillReferenceValidator do
   
+  @moduledoc false
+  
   @error_message "The bill calculation was not executed because reference has not the valid format of MM/AAAA or has invalid month"
 
   def validate(%{"reference_period" => reference} = bill_params) do

@@ -1,5 +1,7 @@
 defmodule BillingProcessor.ErrorMessage do
 
+  @moduledoc false
+  
   def for_wrong({:structure, field}, _value), do: "call record don't have #{field}"
   
   def for_wrong({:duplicated_in_database, field}, value), do:  "call record with #{field}: #{value} already exists in database"

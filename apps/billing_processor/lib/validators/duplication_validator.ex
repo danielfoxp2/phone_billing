@@ -1,6 +1,8 @@
 defmodule BillingProcessor.DuplicationValidator do
   alias BillingProcessor.Error
 
+  @moduledoc false
+  
   def add_errors_for_duplicated(call_records_being_inserted) do   
     call_records_being_inserted
     |> add_errors_for_duplicated("id")

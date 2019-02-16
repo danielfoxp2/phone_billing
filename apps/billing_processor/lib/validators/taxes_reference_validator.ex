@@ -1,5 +1,7 @@
 defmodule BillingProcessor.TaxesReferenceValidator do
   
+  @moduledoc false
+  
   def validate(%{reference_period: reference_from_database}, taxes_params) do
     get_current_reference()
     |> is_greater_than?(reference_from_database)

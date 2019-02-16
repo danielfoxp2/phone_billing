@@ -2,6 +2,8 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
   alias BillingProcessor.Bills.BillDetailsFormatter
   alias BillingProcessor.Bills.CalculationOfDaysInterval
 
+  @moduledoc false
+  
   @one_minute_as_seconds 60
 
   def from(call) do

@@ -1,6 +1,8 @@
 defmodule BillingProcessor.CallStructure do
   alias BillingProcessor.Error
 
+  @moduledoc false
+  
   def validate_pair_of(call_records) do
     call_records
     |> group_by_call_id()

@@ -1,5 +1,7 @@
 defmodule BillingProcessor.PostbackUrlValidator do
 
+  @moduledoc false
+  
   @postback_url_not_exist_message "The processing was not executed because postback url was not informed"
 
   def is_valid?(nil), do: {:postback_url_error, @postback_url_not_exist_message}

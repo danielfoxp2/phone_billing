@@ -1,5 +1,7 @@
 defmodule BillingProcessor.TimestampValidator do
   
+  @moduledoc false
+  
   def check_consistence_of(timestamp) do
     timestamp
     |> NaiveDateTime.from_iso8601

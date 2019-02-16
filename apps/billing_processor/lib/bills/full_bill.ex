@@ -1,6 +1,8 @@
 defmodule BillingProcessor.Bills.FullBill do
   alias BillingProcessor.Bills.BillDetails
 
+  @moduledoc false
+  
   def build(grouped_calls, %{standing_charge: _standing_charge} = taxes, bill_params) do
     {:ok, mount_bill(grouped_calls, taxes, bill_params)}
   end

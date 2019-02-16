@@ -1,6 +1,8 @@
 defmodule BillingProcessor.Bills.Callculator do
   alias BillingProcessor.Bills.ChargedMinutes
   
+  @moduledoc false
+  
   def get_total_of(call, standing_charge, charge_per_minute) do
     ChargedMinutes.from(call)
     |> calculate_total_minutes_cost_with_this(charge_per_minute)

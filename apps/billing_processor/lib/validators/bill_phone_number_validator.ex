@@ -1,5 +1,7 @@
 defmodule BillingProcessor.BillPhoneNumberValidator do
   
+  @moduledoc false
+  
   @error_message "The bill calculation was not executed because phone number is invalid or not informed"
 
   def validate(%{"phone_number" => nil} = bill_params), do: mount_error_in(bill_params)

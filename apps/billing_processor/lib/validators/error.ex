@@ -1,6 +1,8 @@
 defmodule BillingProcessor.Error do
   alias BillingProcessor.ErrorMessage
 
+  @moduledoc false
+  
   def build(in_call_record, field, when_it_is_invalid) do
     when_it_is_invalid
     |> mount_error(in_call_record, field)

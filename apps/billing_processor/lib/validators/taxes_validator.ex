@@ -1,6 +1,8 @@
 defmodule BillingProcessor.TaxesValidator do
   alias BillingProcessor.BillReferenceValidator
 
+  @moduledoc false
+  
   @reference_period_message "The reference period should be informed with key 'reference_period' and formatted MM/AAAA"
   @standing_charge_message "The standing charge should be informed with key 'standing_charge'"
   @standing_charge_number_message "The standing charge should be a float number"

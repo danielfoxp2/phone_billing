@@ -1,5 +1,7 @@
 defmodule BillingProcessor.ResponseBuilder do
-
+  
+  @moduledoc false
+  
   def mount_processing_result({call_records_inserted, all_call_records}) do
     response_of_processing_validation = mount_parallel_response_of_processing_validation_of(all_call_records)
     response_of_database_insertion = mount_parallel_response_of_database_insertion_of(call_records_inserted)

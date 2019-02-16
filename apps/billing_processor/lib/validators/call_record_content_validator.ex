@@ -2,6 +2,8 @@ defmodule BillingProcessor.CallRecordContentValidator do
   alias BillingProcessor.TimestampValidator
   alias BillingProcessor.Error
 
+  @moduledoc false
+  
   def validate(call_records) do
     call_records
     |> process_validation_in_parallel
