@@ -3,7 +3,7 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
 
   def from(call) do
     call
-    |> adjust_timestamp_call_to_charged_period
+    |> adjust_timestamp_call_to_charged_period()
     |> get_how_much_days_in()
     |> calculate_accountable_minutes_for()
   end
@@ -32,17 +32,24 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
   end
 
   defp get_how_much_days_in([%{timestamp: start_record_timestamp}, %{timestamp: end_record_timestamp}] = call) do
-    cosmologic_constant = 1
-    initial_day = DateTime.to_date(start_record_timestamp)
-    end_day = DateTime.to_date(end_record_timestamp)
-
-    days_of_call = Date.diff(end_day, initial_day)
-    days_in_call = days_of_call + cosmologic_constant 
-
-    call_with_how_much_days_duration = [%{days: days_in_call} | call]
-    call_with_how_much_days_duration
+    get_as_date(start_record_timestamp, end_record_timestamp)
+    |> get_amount_of_days_between_end_and_start_date()
+    |> mount_duration_for(call)
   end
 
+  defp get_as_date(start_record_timestamp, end_record_timestamp) do
+    {get_as_date(start_record_timestamp), get_as_date(end_record_timestamp)}
+  end
+
+  defp get_as_date(timestamp), do: DateTime.to_date(timestamp)
+
+  defp get_amount_of_days_between_end_and_start_date({initial_day, end_day}) do
+    adjust_day_to_not_exclude_itself = 1
+    Date.diff(end_day, initial_day) + adjust_day_to_not_exclude_itself 
+  end
+
+  defp mount_duration_for(call_duration_in_days, call), do: [%{days: call_duration_in_days} | call]
+    
   defp calculate_accountable_minutes_for([%{days: 2}, _, _] = call), do: adjust_start_time_limit(call)
   defp calculate_accountable_minutes_for([%{days: 1}, _, _] = call) do
     call
