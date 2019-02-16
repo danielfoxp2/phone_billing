@@ -1,6 +1,26 @@
 defmodule BillingRepository.Bills.TariffRepository do
   alias BillingRepository.Repo
 
+  @moduledoc """
+  Responsible for manage taxes that will be used in bill calculation
+  """
+
+
+  @doc """
+  Gets the persisted standing and call charges for the given reference period.
+
+  ## Parameters
+
+    - reference_period: A map having a key called "reference_period" and a value in the format `"MM/yyyy"`.
+
+  ## Examples
+
+      iex> TariffRepository.get_taxes(%{"reference_period" => "02/2019"})
+      %{ reference_period: "02/2019", standing_charge: 0.36, call_charge: 0.09 }
+
+      iex> TariffRepository.get_taxes(%{"reference_period" => "05/2019"})
+      %{ reference_period: "05/2019", standing_charge: 0.50, call_charge: 0.17 }
+  """
   def get_taxes(%{"reference_period" => reference_period}) do
     reference_period
     |> format_for_db()
@@ -9,6 +29,18 @@ defmodule BillingRepository.Bills.TariffRepository do
     |> mount_result()
   end
 
+  @doc """
+  Insert for the immediate next reference the same taxes of the given reference if there isn't any configured taxes already persisted.
+  
+  ## Parameters
+
+    - reference_period: A String in the format `"MM/yyyy"`.
+
+  ## Examples
+
+      iex> TariffRepository.insert_taxes_if_needed_for("02/2019")
+      {:ok, %{rows: nil, num_rows: 1}}
+  """
   def insert_taxes_if_needed_for(reference_period) do
     reference_period
     |> get_next()
@@ -16,6 +48,23 @@ defmodule BillingRepository.Bills.TariffRepository do
     |> Repo.query!()
   end
 
+  @doc """
+  Insert taxes for the given reference.
+  
+  ## Parameters
+  
+    A map with the following structure:
+
+    - reference_period: A String in the format `"MM/yyyy"`.
+    - standing_charge: A float number.
+    - call_charge: A float number.
+
+  ## Examples
+
+      iex> taxes = %{ "reference_period" => "05/2019", "standing_charge" => 0.50, "call_charge" => 0.17 }
+      iex> TariffRepository.insert_new(taxes)
+      {:ok, "Taxes inserted"}
+  """
   def insert_new(taxes) do
     taxes
     |> delete_reference_if_exists()
