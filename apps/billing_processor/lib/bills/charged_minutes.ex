@@ -22,7 +22,7 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     six_am = "06"
     new_possible_start_record_timestamp = generate(six_am, start_record_timestamp)
 
-    start_date = DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
+    DateTime.compare(start_record_timestamp, new_possible_start_record_timestamp)
     |> return_start_time_for_this(start_record_timestamp, new_possible_start_record_timestamp)
   end
 
@@ -30,7 +30,7 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     ten_pm = "22"
     new_possible_end_record_timestamp = generate(ten_pm, end_record_timestamp) 
 
-    end_date = DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
+    DateTime.compare(end_record_timestamp, new_possible_end_record_timestamp)
     |> return_end_time_for_this(end_record_timestamp, new_possible_end_record_timestamp)
   end
 
