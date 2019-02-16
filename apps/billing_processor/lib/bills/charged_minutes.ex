@@ -119,16 +119,6 @@ defmodule BillingProcessor.Bills.ChargedMinutes do
     |> mount_start_result(end_record, days)
   end
 
-  defp adjust_end_time_limit([%{days: 1}, start_record, %{timestamp: end_record_timestamp}]) do
-    adjusted_end_timestamp(end_record_timestamp)
-    |> mount_end_result(start_record)
-  end
-
-  defp adjust_end_time_limit([%{days: 2}, start_record, %{timestamp: end_record_timestamp}]) do
-    adjusted_end_timestamp(end_record_timestamp)
-    |> mount_end_result(start_record)
-  end
-
   defp adjust_end_time_limit([_dont_matter, start_record, %{timestamp: end_record_timestamp}]) do
     adjusted_end_timestamp(end_record_timestamp)
     |> mount_end_result(start_record)
