@@ -6,7 +6,7 @@ The PhoneBilling architecture is divided in three applications: BillingGateway, 
 
 The apps separation is for maintenance flexibility and project improviment, making it easier to make changes, i.g., replacing Postgres to MongoDB, changing the API for something else or just change the validators inside BillingProcessor.
 
-![PhoneBilling Flow](./PhoneBillingFlow.png-300x300.png)
+![PhoneBilling Flow](assets/PhoneBillingFlow.300x300.png)
 
 ## BillingGateway
 

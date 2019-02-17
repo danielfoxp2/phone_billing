@@ -31,7 +31,8 @@ defmodule PhoneBilling.MixProject do
   defp docs do
     [
       source_url: "https://github.com/danielfoxp2/phone_billing",
-      extras: ["README.md", "api_documentation.md"]
+      extras: ["README.md", "api_documentation.md"],
+      assets: "assets/"
     ]
   end
 end
