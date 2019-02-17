@@ -99,6 +99,10 @@ The applications billing_gateway and billing_repository were fully documented bu
 
 It was done this way to provide an example of a code without formal documentation that uses the specification (tests), modules interfaces and functions implementations as its own documentation, following the self-documented code practice.
 
+## Next steps
+
+There is a lot of thing to improve but the major one is to **create supervisors strategies** on important flows, improving the system fault tolerance. 
+
 
 
 
